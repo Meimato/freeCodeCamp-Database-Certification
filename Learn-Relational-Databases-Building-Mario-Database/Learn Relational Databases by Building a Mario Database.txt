@@ -1,0 +1,1620 @@
+codeally@8512b7e62524:~/project$ echo hello PostgreSQL
+hello PostgreSQL
+codeally@8512b7e62524:~/project$ psql --username=freecodecamp dbname=postgres
+Border style is 2.
+Title is " ".
+Pager usage is off.
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+postgres=> \l
+postgres=>                                List of databases
++-----------+----------+----------+---------+---------+-----------------------+
+|   Name    |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   |
++-----------+----------+----------+---------+---------+-----------------------+
+| postgres  | postgres | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0 | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|           |          |          |         |         | postgres=CTc/postgres |
+| template1 | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|           |          |          |         |         | postgres=CTc/postgres |
++-----------+----------+----------+---------+---------+-----------------------+
+(3 rows)
+
+CREATE DATABASE first_database
+postgres-> \l
+                               List of databases
++-----------+----------+----------+---------+---------+-----------------------+
+|   Name    |  Owner   | Encoding | Collate |  Ctype  |   Access privileges   |
++-----------+----------+----------+---------+---------+-----------------------+
+| postgres  | postgres | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0 | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|           |          |          |         |         | postgres=CTc/postgres |
+| template1 | postgres | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|           |          |          |         |         | postgres=CTc/postgres |
++-----------+----------+----------+---------+---------+-----------------------+
+(3 rows)
+
+postgres-> CREATE DATABASE first_database;
+ERROR:  syntax error at or near "CREATE"
+LINE 2: CREATE DATABASE first_database;
+        ^
+postgres=> CREATE DATABASE first_database;
+postgres=> CREATE DATABASE
+asd;
+ERROR:  syntax error at or near "asd"
+LINE 1: asd;
+        ^
+postgres=> 
+postgres=> \l
+                                   List of databases
++----------------+--------------+----------+---------+---------+-----------------------+
+|      Name      |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++----------------+--------------+----------+---------+---------+-----------------------+
+| first_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
+| template1      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
++----------------+--------------+----------+---------+---------+-----------------------+
+(4 rows)
+
+postgres=> CREATE DATABASE second_database;
+CREATE DATABASE
+postgres=> \l
+                                    List of databases
++-----------------+--------------+----------+---------+---------+-----------------------+
+|      Name       |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++-----------------+--------------+----------+---------+---------+-----------------------+
+| first_database  | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres        | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| second_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                 |              |          |         |         | postgres=CTc/postgres |
+| template1       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                 |              |          |         |         | postgres=CTc/postgres |
++-----------------+--------------+----------+---------+---------+-----------------------+
+(5 rows)
+
+postgres=> \c second_database
+You are now connected to database "second_database" as user "freecodecamp".
+second_database=> \d
+Did not find any relations.
+second_database=> CREATE TABLE first_table();
+CREATE TABLE
+second_database=> \d
+               List of relations
++--------+-------------+-------+--------------+
+| Schema |    Name     | Type  |    Owner     |
++--------+-------------+-------+--------------+
+| public | first_table | table | freecodecamp |
++--------+-------------+-------+--------------+
+(1 row)
+
+second_database=> CREATE TABLE second_table();
+second_database=> CREATE TABLE
+\d
+               List of relations
++--------+--------------+-------+--------------+
+| Schema |     Name     | Type  |    Owner     |
++--------+--------------+-------+--------------+
+| public | first_table  | table | freecodecamp |
+| public | second_table | table | freecodecamp |
++--------+--------------+-------+--------------+
+(2 rows)
+
+second_database=> \d second_table
+second_database=>            Table "public.second_table"
++--------+------+-----------+----------+---------+
+| Column | Type | Collation | Nullable | Default |
++--------+------+-----------+----------+---------+
++--------+------+-----------+----------+---------+
+
+;
+second_database=> ALTER TABLE second_table ADD COLUMN first_column INT;
+second_database=> ALTER TABLE
+\d second_table
+                Table "public.second_table"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| first_column | integer |           |          |         |
++--------------+---------+-----------+----------+---------+
+
+second_database=> ALTER TABLE second_table ADD COLUMN id INT;
+second_database=> ALTER TABLE
+\d second_table
+second_database=>                 Table "public.second_table"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| first_column | integer |           |          |         |
+| id           | integer |           |          |         |
++--------------+---------+-----------+----------+---------+
+
+;
+second_database=> ALTER TABLE second_table ADD COLUMN age INT;
+second_database=> ALTER TABLE
+\d second_table;
+second_database=>                 Table "public.second_table"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| first_column | integer |           |          |         |
+| id           | integer |           |          |         |
+| age          | integer |           |          |         |
++--------------+---------+-----------+----------+---------+
+
+;
+second_database=> ALTER TABLE second_table DROP COLUMN age;
+second_database=> ALTER TABLE
+\d second_table;
+second_database=>                 Table "public.second_table"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| first_column | integer |           |          |         |
+| id           | integer |           |          |         |
++--------------+---------+-----------+----------+---------+
+
+;
+second_database=> ALTER TABLE second_table DROP COLUMN first_column;
+ALTER TABLE
+second_database=> ALTER TABLE second_table ADD COLUMN name VARCHAR(30);
+ALTER TABLE
+second_database=> \d second_table;
+second_database=>                     Table "public.second_table"
++--------+-----------------------+-----------+----------+---------+
+| Column |         Type          | Collation | Nullable | Default |
++--------+-----------------------+-----------+----------+---------+
+| id     | integer               |           |          |         |
+| name   | character varying(30) |           |          |         |
++--------+-----------------------+-----------+----------+---------+
+
+;
+second_database=> ALTER TABLE second_table RENAME COLUMN name TO username;
+ALTER TABLE
+second_database=> \d second_table;
+second_database=>                      Table "public.second_table"
++----------+-----------------------+-----------+----------+---------+
+|  Column  |         Type          | Collation | Nullable | Default |
++----------+-----------------------+-----------+----------+---------+
+| id       | integer               |           |          |         |
+| username | character varying(30) |           |          |         |
++----------+-----------------------+-----------+----------+---------+
+
+;
+second_database=> INSERT INTO second_table(id, username) VALUES(1, 'Samus');
+second_database=> INSERT 0 1
+;
+second_database=> SELECT columns FROM second_table;
+ERROR:  column "columns" does not exist
+LINE 1: SELECT columns FROM second_table;
+               ^
+second_database=> SELECT * FROM second_table;
+second_database=>          
++----+----------+
+| id | username |
++----+----------+
+|  1 | Samus    |
++----+----------+
+(1 row)
+
+;
+second_database=> INSERT INTO second_table(id, username) VALUES(2, 'Mario');
+INSERT 0 1
+second_database=> SELECT * from second_table;
+second_database=>          
++----+----------+
+| id | username |
++----+----------+
+|  1 | Samus    |
+|  2 | Mario    |
++----+----------+
+(2 rows)
+
+;
+second_database=> INSERT INTO second_table(id, username) VALUES(3, 'Luigi');
+second_database=> INSERT 0 1
+;
+second_database=> SELECT * FROM second_table;
+         
++----+----------+
+| id | username |
++----+----------+
+|  1 | Samus    |
+|  2 | Mario    |
+|  3 | Luigi    |
++----+----------+
+(3 rows)
+
+second_database=> DELETE FROM second_table WHERE username='Luigi';
+second_database=> DELETE 1
+SELECT * FROM second_table;
+         
++----+----------+
+| id | username |
++----+----------+
+|  1 | Samus    |
+|  2 | Mario    |
++----+----------+
+(2 rows)
+
+second_database=> DELETE FROM second_table WHERE username='Mario';
+DELETE 1
+second_database=> DELETE FROM second_table WHERE username='Samus';
+DELETE 1
+second_database=> SELECT * FROM second_table;
+second_database=>          
++----+----------+
+| id | username |
++----+----------+
++----+----------+
+(0 rows)
+
+;
+second_database=> \d
+second_database=>                List of relations
++--------+--------------+-------+--------------+
+| Schema |     Name     | Type  |    Owner     |
++--------+--------------+-------+--------------+
+| public | first_table  | table | freecodecamp |
+| public | second_table | table | freecodecamp |
++--------+--------------+-------+--------------+
+(2 rows)
+
+\d second_table
+second_database=>                      Table "public.second_table"
++----------+-----------------------+-----------+----------+---------+
+|  Column  |         Type          | Collation | Nullable | Default |
++----------+-----------------------+-----------+----------+---------+
+| id       | integer               |           |          |         |
+| username | character varying(30) |           |          |         |
++----------+-----------------------+-----------+----------+---------+
+
+ALTER TABLE second_table DROP COLUMN username;
+ALTER TABLE
+second_database=> ALTER TABLE second_table DROP COLUMN id;
+ALTER TABLE
+second_database=> \d second_table;
+second_database=>            Table "public.second_table"
++--------+------+-----------+----------+---------+
+| Column | Type | Collation | Nullable | Default |
++--------+------+-----------+----------+---------+
++--------+------+-----------+----------+---------+
+
+\d
+               List of relations
++--------+--------------+-------+--------------+
+| Schema |     Name     | Type  |    Owner     |
++--------+--------------+-------+--------------+
+| public | first_table  | table | freecodecamp |
+| public | second_table | table | freecodecamp |
++--------+--------------+-------+--------------+
+(2 rows)
+
+second_database=> DROP TABLE second_table;
+second_database=> DROP TABLE
+DROP TABLE first_table;
+DROP TABLE
+second_database=> \d
+Did not find any relations.
+second_database=> \l
+                                    List of databases
++-----------------+--------------+----------+---------+---------+-----------------------+
+|      Name       |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++-----------------+--------------+----------+---------+---------+-----------------------+
+| first_database  | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres        | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| second_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                 |              |          |         |         | postgres=CTc/postgres |
+| template1       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                 |              |          |         |         | postgres=CTc/postgres |
++-----------------+--------------+----------+---------+---------+-----------------------+
+(5 rows)
+
+second_database=> ALTER DATABASE first_database RENAME TO mario_database;
+second_database=> ALTER DATABASE
+\l
+second_database=>                                     List of databases
++-----------------+--------------+----------+---------+---------+-----------------------+
+|      Name       |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++-----------------+--------------+----------+---------+---------+-----------------------+
+| mario_database  | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres        | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| second_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                 |              |          |         |         | postgres=CTc/postgres |
+| template1       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                 |              |          |         |         | postgres=CTc/postgres |
++-----------------+--------------+----------+---------+---------+-----------------------+
+(5 rows)
+
+\c mario_database;
+You are now connected to database "mario_database" as user "freecodecamp".
+mario_database=> DROP DATABASE second_database;
+DROP DATABASE
+mario_database=> \l
+                                   List of databases
++----------------+--------------+----------+---------+---------+-----------------------+
+|      Name      |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++----------------+--------------+----------+---------+---------+-----------------------+
+| mario_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
+| template1      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
++----------------+--------------+----------+---------+---------+-----------------------+
+(4 rows)
+
+mario_database=> \d
+Did not find any relations.
+mario_database=> CREATE TABLE characters;
+ERROR:  syntax error at or near ";"
+LINE 1: CREATE TABLE characters;
+                               ^
+mario_database=> CREATE TABLE characters();
+CREATE TABLE
+mario_database=> ALTER TABLE characters ADD COLUMN character_id SERIAL;
+ALTER TABLE
+mario_database=> \d
+                        List of relations
++--------+-----------------------------+----------+--------------+
+| Schema |            Name             |   Type   |    Owner     |
++--------+-----------------------------+----------+--------------+
+| public | characters                  | table    | freecodecamp |
+| public | characters_character_id_seq | sequence | freecodecamp |
++--------+-----------------------------+----------+--------------+
+(2 rows)
+
+mario_database=> \d characters
+mario_database=>                                      Table "public.characters"
++--------------+---------+-----------+----------+--------------------------------------------------+
+|    Column    |  Type   | Collation | Nullable |                     Default                      |
++--------------+---------+-----------+----------+--------------------------------------------------+
+| character_id | integer |           | not null | nextval('characters_character_id_seq'::regclass) |
++--------------+---------+-----------+----------+--------------------------------------------------+
+
+ALTER TABLE characters ADD COLUMN name VARCHAR(30) NOT NULL;
+ALTER TABLE
+mario_database=> ALTER TABLE characters ADD COLUMN homeland VARCHAR(60);
+mario_database=> ALTER TABLE
+;
+mario_database=> ALTER TABLE characters ADD COLUMN favorite_color VARCHAR(30);
+ALTER TABLE
+mario_database=> \d characters
+                                             Table "public.characters"
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+|     Column     |         Type          | Collation | Nullable |                     Default                      |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+| character_id   | integer               |           | not null | nextval('characters_character_id_seq'::regclass) |
+| name           | character varying(30) |           | not null |                                                  |
+| homeland       | character varying(60) |           |          |                                                  |
+| favorite_color | character varying(30) |           |          |                                                  |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+
+mario_database=> INSERT INTO characters(name, homeland, favorite_color) VALUES('Mario', 'Mushroom Kingdom', 'Red');
+INSERT 0 1
+mario_database=> SELECT * FROM characters;
+mario_database=>                               
++--------------+-------+------------------+----------------+
+| character_id | name  |     homeland     | favorite_color |
++--------------+-------+------------------+----------------+
+|            1 | Mario | Mushroom Kingdom | Red            |
++--------------+-------+------------------+----------------+
+(1 row)
+
+SELECT * FROM chaINSERT INTO characters(name, homeland, favorite_color) VALUES('Luigi', 'Mushroom Kingdom', 'Green');
+INSERT 0 1
+mario_database=> SELECT * FROM characters;
+                              
++--------------+-------+------------------+----------------+
+| character_id | name  |     homeland     | favorite_color |
++--------------+-------+------------------+----------------+
+|            1 | Mario | Mushroom Kingdom | Red            |
+|            2 | Luigi | Mushroom Kingdom | Green          |
++--------------+-------+------------------+----------------+
+(2 rows)
+
+mario_database=> INSERT INTO characters(name, homeland, favorite_color) VALUES('Peach', 'Mushroom Kingdom', 'Pink');
+INSERT 0 1
+mario_database=> INSERT INTO characters(name, homeland, favorite_color) VALUES('Toadstool', 'Mushroom Kingdom', 'Red'), ('Bowser', 'Mushroom Kingdom', 'Green');
+INSERT 0 2
+mario_database=> INSERT INTO characters(name, homeland, favorite_color) VALUES('Daisy', 'Sarasaland', 'Yellow'), ('Yoshi', 'Dinosaur Land', 'Green');
+mario_database=> INSERT 0 2
+SELECT * FROM characters;
+                                
++--------------+-----------+------------------+----------------+
+| character_id |   name    |     homeland     | favorite_color |
++--------------+-----------+------------------+----------------+
+|            1 | Mario     | Mushroom Kingdom | Red            |
+|            2 | Luigi     | Mushroom Kingdom | Green          |
+|            3 | Peach     | Mushroom Kingdom | Pink           |
+|            4 | Toadstool | Mushroom Kingdom | Red            |
+|            5 | Bowser    | Mushroom Kingdom | Green          |
+|            6 | Daisy     | Sarasaland       | Yellow         |
+|            7 | Yoshi     | Dinosaur Land    | Green          |
++--------------+-----------+------------------+----------------+
+(7 rows)
+
+mario_database=> UPDATE characters SET favorite_color='Orange' WHERE name='Daisy';
+UPDATE 1
+mario_database=> SELECT * FROM characters;
+mario_database=>                                 
++--------------+-----------+------------------+----------------+
+| character_id |   name    |     homeland     | favorite_color |
++--------------+-----------+------------------+----------------+
+|            1 | Mario     | Mushroom Kingdom | Red            |
+|            2 | Luigi     | Mushroom Kingdom | Green          |
+|            3 | Peach     | Mushroom Kingdom | Pink           |
+|            4 | Toadstool | Mushroom Kingdom | Red            |
+|            5 | Bowser    | Mushroom Kingdom | Green          |
+|            7 | Yoshi     | Dinosaur Land    | Green          |
+|            6 | Daisy     | Sarasaland       | Orange         |
++--------------+-----------+------------------+----------------+
+(7 rows)
+
+;UPDATE characters SET name='Toad' WHERE favorite_color='Red';
+mario_database=> UPDATE 2
+;UPDATE character
+mario_database=> SELECT * FROM characters;
+                               
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            5 | Bowser | Mushroom Kingdom | Green          |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Toad   | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Red            |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+mario_database=> UPDATE characters SET name='Mario' WHERE character_id=1;
+UPDATE 1
+mario_database=> SELECT * FROM characters;
+mario_database=>                                
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            5 | Bowser | Mushroom Kingdom | Green          |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            4 | Toad   | Mushroom Kingdom | Red            |
+|            1 | Mario  | Mushroom Kingdom | Red            |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+;
+mario_database=> UPDATE characters SET favorite_color='Blue' WHERE name='Toad';
+UPDATE 1
+mario_database=> UPDATE characters SET favorite_color='Yellow' WHERE name='Bowser';
+mario_database=> UPDATE 1
+;
+mario_database=> UPDATE characters SET homeland='Koopa Kingdom' WHERE name='Bowser';
+UPDATE 1
+mario_database=> SELECT * FROM characters;
+mario_database=>                                
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+;
+mario_database=> SELECT * FROM characters ORDER BY character_id;
+                               
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+mario_database=> ALTER TABLE characters ADD PRIMARY KEY(name);
+mario_database=> ALTER TABLE
+;
+mario_database=> SELECT * FROM characters;
+                               
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+mario_database=> \d characters
+mario_database=>                                              Table "public.characters"
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+|     Column     |         Type          | Collation | Nullable |                     Default                      |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+| character_id   | integer               |           | not null | nextval('characters_character_id_seq'::regclass) |
+| name           | character varying(30) |           | not null |                                                  |
+| homeland       | character varying(60) |           |          |                                                  |
+| favorite_color | character varying(30) |           |          |                                                  |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+Indexes:
+    "characters_pkey" PRIMARY KEY, btree (name)
+
+;
+mario_database=> ALTER TABLE characters DROP CONSTRAINT characters_pkey;
+mario_database=> ALTER TABLE
+;
+mario_database=> \d characters;
+mario_database=>                                              Table "public.characters"
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+|     Column     |         Type          | Collation | Nullable |                     Default                      |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+| character_id   | integer               |           | not null | nextval('characters_character_id_seq'::regclass) |
+| name           | character varying(30) |           | not null |                                                  |
+| homeland       | character varying(60) |           |          |                                                  |
+| favorite_color | character varying(30) |           |          |                                                  |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+
+ALTER TABLE characters ADD PRIMARY KEY(character_id);
+ALTER TABLE
+mario_database=> \d characters;
+                                             Table "public.characters"
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+|     Column     |         Type          | Collation | Nullable |                     Default                      |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+| character_id   | integer               |           | not null | nextval('characters_character_id_seq'::regclass) |
+| name           | character varying(30) |           | not null |                                                  |
+| homeland       | character varying(60) |           |          |                                                  |
+| favorite_color | character varying(30) |           |          |                                                  |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+Indexes:
+    "characters_pkey" PRIMARY KEY, btree (character_id)
+
+mario_database=> CREATE TABLE more_info();
+CREATE TABLE
+mario_database=> \dmario_database;
+                               List of relations
++--------+-----------------------------+----------+--------------+------------+
+| Schema |            Name             |   Type   |    Owner     |   Table    |
++--------+-----------------------------+----------+--------------+------------+
+| public | characters                  | table    | freecodecamp |            |
+| public | characters_character_id_seq | sequence | freecodecamp |            |
+| public | characters_pkey             | index    | freecodecamp | characters |
+| public | more_info                   | table    | freecodecamp |            |
++--------+-----------------------------+----------+--------------+------------+
+(4 rows)
+
+mario_database=> \d mario_database;
+Did not find any relation named "mario_database".
+mario_database=> \d
+                        List of relations
++--------+-----------------------------+----------+--------------+
+| Schema |            Name             |   Type   |    Owner     |
++--------+-----------------------------+----------+--------------+
+| public | characters                  | table    | freecodecamp |
+| public | characters_character_id_seq | sequence | freecodecamp |
+| public | more_info                   | table    | freecodecamp |
++--------+-----------------------------+----------+--------------+
+(3 rows)
+
+mario_database=> \d characters
+                                             Table "public.characters"
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+|     Column     |         Type          | Collation | Nullable |                     Default                      |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+| character_id   | integer               |           | not null | nextval('characters_character_id_seq'::regclass) |
+| name           | character varying(30) |           | not null |                                                  |
+| homeland       | character varying(60) |           |          |                                                  |
+| favorite_color | character varying(30) |           |          |                                                  |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+Indexes:
+    "characters_pkey" PRIMARY KEY, btree (character_id)
+
+mario_database=> ALTER TABLE more_info ADD COLUMN more_info_id SERIAL;
+mario_database=> ALTER TABLE
+ALTER TABLE more_info ADD PRIMARY KEY(more_info_id);
+mario_database=> ALTER TABLE
+\d
+                        List of relations
++--------+-----------------------------+----------+--------------+
+| Schema |            Name             |   Type   |    Owner     |
++--------+-----------------------------+----------+--------------+
+| public | characters                  | table    | freecodecamp |
+| public | characters_character_id_seq | sequence | freecodecamp |
+| public | more_info                   | table    | freecodecamp |
+| public | more_info_more_info_id_seq  | sequence | freecodecamp |
++--------+-----------------------------+----------+--------------+
+(4 rows)
+
+mario_database=> ALTER TABLE more_info ADD COLUMN birthday DATE;
+ALTER TABLE
+mario_database=> ALTER TABLE more_info ADD COLUMN height INT;
+ALTER TABLE
+mario_database=> ALTER TABLE more_info ADD COLUMN weight NUMERIC(4, 1);
+mario_database=> ALTER TABLE
+\d more_info;
+mario_database=>                                         Table "public.more_info"
++--------------+--------------+-----------+----------+-------------------------------------------------+
+|    Column    |     Type     | Collation | Nullable |                     Default                     |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+| more_info_id | integer      |           | not null | nextval('more_info_more_info_id_seq'::regclass) |
+| birthday     | date         |           |          |                                                 |
+| height       | integer      |           |          |                                                 |
+| weight       | numeric(4,1) |           |          |                                                 |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+Indexes:
+    "more_info_pkey" PRIMARY KEY, btree (more_info_id)
+
+ALTER TABLE more_info ADD COLUMN character_id INT REFERENCES characters(character_id);
+ALTER TABLE
+mario_database=> \d more_info;
+mario_database=>                                         Table "public.more_info"
++--------------+--------------+-----------+----------+-------------------------------------------------+
+|    Column    |     Type     | Collation | Nullable |                     Default                     |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+| more_info_id | integer      |           | not null | nextval('more_info_more_info_id_seq'::regclass) |
+| birthday     | date         |           |          |                                                 |
+| height       | integer      |           |          |                                                 |
+| weight       | numeric(4,1) |           |          |                                                 |
+| character_id | integer      |           |          |                                                 |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+Indexes:
+    "more_info_pkey" PRIMARY KEY, btree (more_info_id)
+Foreign-key constraints:
+    "more_info_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+ALTER TABLE more_info ADD UNIQUE(character_id);
+mario_database=> ALTER TABLE
+ALTER TABLE more_info ALTER COLUMN character_id SET NOT NULL;
+ALTER TABLE
+mario_database=> \d more_info;
+                                        Table "public.more_info"
++--------------+--------------+-----------+----------+-------------------------------------------------+
+|    Column    |     Type     | Collation | Nullable |                     Default                     |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+| more_info_id | integer      |           | not null | nextval('more_info_more_info_id_seq'::regclass) |
+| birthday     | date         |           |          |                                                 |
+| height       | integer      |           |          |                                                 |
+| weight       | numeric(4,1) |           |          |                                                 |
+| character_id | integer      |           | not null |                                                 |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+Indexes:
+    "more_info_pkey" PRIMARY KEY, btree (more_info_id)
+    "more_info_character_id_key" UNIQUE CONSTRAINT, btree (character_id)
+Foreign-key constraints:
+    "more_info_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+mario_database=> SELECT * FROM characters;
+                               
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+mario_database=> SELECT character_id FROM characters;
+        
++--------------+
+| character_id |
++--------------+
+|            2 |
+|            3 |
+|            7 |
+|            6 |
+|            1 |
+|            4 |
+|            5 |
++--------------+
+(7 rows)
+
+mario_database=> SELECT character_id, name FROM characters;
+             
++--------------+--------+
+| character_id |  name  |
++--------------+--------+
+|            2 | Luigi  |
+|            3 | Peach  |
+|            7 | Yoshi  |
+|            6 | Daisy  |
+|            1 | Mario  |
+|            4 | Toad   |
+|            5 | Bowser |
++--------------+--------+
+(7 rows)
+
+mario_database=> \d more_info;
+mario_database=>                                         Table "public.more_info"
++--------------+--------------+-----------+----------+-------------------------------------------------+
+|    Column    |     Type     | Collation | Nullable |                     Default                     |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+| more_info_id | integer      |           | not null | nextval('more_info_more_info_id_seq'::regclass) |
+| birthday     | date         |           |          |                                                 |
+| height       | integer      |           |          |                                                 |
+| weight       | numeric(4,1) |           |          |                                                 |
+| character_id | integer      |           | not null |                                                 |
++--------------+--------------+-----------+----------+-------------------------------------------------+
+Indexes:
+    "more_info_pkey" PRIMARY KEY, btree (more_info_id)
+    "more_info_character_id_key" UNIQUE CONSTRAINT, btree (character_id)
+Foreign-key constraints:
+    "more_info_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+SELECT * FROM more_info;
+mario_database=>                               
++--------------+----------+--------+--------+--------------+
+| more_info_id | birthday | height | weight | character_id |
++--------------+----------+--------+--------+--------------+
++--------------+----------+--------+--------+--------------+
+(0 rows)
+
+INSERT INTO more_info(birthday, height, weight, character_id) VALUES('1981-07-09', 155, 64.5, 1); 
+mario_database=> INSERT 0 1
+SELECT * FROM more_info;
+                               
++--------------+------------+--------+--------+--------------+
+| more_info_id |  birthday  | height | weight | character_id |
++--------------+------------+--------+--------+--------------+
+|            1 | 1981-07-09 |    155 |   64.5 |            1 |
++--------------+------------+--------+--------+--------------+
+(1 row)
+
+mario_database=> SELECT character_id, name FROM characters;
+             
++--------------+--------+
+| character_id |  name  |
++--------------+--------+
+|            2 | Luigi  |
+|            3 | Peach  |
+|            7 | Yoshi  |
+|            6 | Daisy  |
+|            1 | Mario  |
+|            4 | Toad   |
+|            5 | Bowser |
++--------------+--------+
+(7 rows)
+
+mario_database=> INSERT INTO more_info(birthday, height, weight, character_id) VALUES('1983-07-14', 175, 48.8, 2);
+mario_database=> INSERT 0 1
+SELECT * FROM more_info;
+                               
++--------------+------------+--------+--------+--------------+
+| more_info_id |  birthday  | height | weight | character_id |
++--------------+------------+--------+--------+--------------+
+|            1 | 1981-07-09 |    155 |   64.5 |            1 |
+|            2 | 1983-07-14 |    175 |   48.8 |            2 |
++--------------+------------+--------+--------+--------------+
+(2 rows)
+
+mario_database=> SELECT character_id, name FROM characters;
+mario_database=>              
++--------------+--------+
+| character_id |  name  |
++--------------+--------+
+|            2 | Luigi  |
+|            3 | Peach  |
+|            7 | Yoshi  |
+|            6 | Daisy  |
+|            1 | Mario  |
+|            4 | Toad   |
+|            5 | Bowser |
++--------------+--------+
+(7 rows)
+
+INSERT INTO more_info(birthday, height, weight, character_id) VALUES('1985-10-18', 173, 52.2, 3);
+INSERT 0 1
+mario_database=> SELECT character_id, name FROM characters WHERE name='Toad';
+            
++--------------+------+
+| character_id | name |
++--------------+------+
+|            4 | Toad |
++--------------+------+
+(1 row)
+
+mario_database=> INSERT INTO more_info(birthday, height, weight, character_id) VALUES('1950-01-10', 66, 35.6, 4);
+INSERT 0 1
+mario_database=> SELECT * FROM more_info;
+mario_database=>                                
++--------------+------------+--------+--------+--------------+
+| more_info_id |  birthday  | height | weight | character_id |
++--------------+------------+--------+--------+--------------+
+|            1 | 1981-07-09 |    155 |   64.5 |            1 |
+|            2 | 1983-07-14 |    175 |   48.8 |            2 |
+|            3 | 1985-10-18 |    173 |   52.2 |            3 |
+|            4 | 1950-01-10 |     66 |   35.6 |            4 |
++--------------+------------+--------+--------+--------------+
+(4 rows)
+
+SELECT character_id, name FROM characters WHERE name='Bowser';
+             
++--------------+--------+
+| character_id |  name  |
++--------------+--------+
+|            5 | Bowser |
++--------------+--------+
+(1 row)
+
+mario_database=> INSERT INTO more_info(birthday, height, weight, character_id) VALUES('1990-10-29', 258, 300, 5);
+INSERT 0 1
+mario_database=> SELECT character_id, name FROM characters WHERE name='Daisy';
+            
++--------------+-------+
+| character_id | name  |
++--------------+-------+
+|            6 | Daisy |
++--------------+-------+
+(1 row)
+
+mario_database=> INSERT INTO more_info(birthday, height, weight, character_id) VALUES('1989-07-31', NULL, NULL, 6);
+INSERT 0 1
+mario_database=> SELECT * FROM more_info;
+mario_database=>                                
++--------------+------------+--------+--------+--------------+
+| more_info_id |  birthday  | height | weight | character_id |
++--------------+------------+--------+--------+--------------+
+|            1 | 1981-07-09 |    155 |   64.5 |            1 |
+|            2 | 1983-07-14 |    175 |   48.8 |            2 |
+|            3 | 1985-10-18 |    173 |   52.2 |            3 |
+|            4 | 1950-01-10 |     66 |   35.6 |            4 |
+|            5 | 1990-10-29 |    258 |  300.0 |            5 |
+|            6 | 1989-07-31 |        |        |            6 |
++--------------+------------+--------+--------+--------------+
+(6 rows)
+
+
+----------------------------------------------------------------------------------------------------------------------------------------------------
+codeally@8512b7e62524:~/project$ ls
+codeally@8512b7e62524:~/project$ psql --username=freecodecamp dbname=postgres
+psql: error: could not connect to server: Connection refused
+        Is the server running locally and accepting
+        connections on Unix domain socket "/var/run/postgresql/.s.PGSQL.5432"?
+codeally@8512b7e62524:~/project$ psql --username=freecodecamp dbname=postgres
+psql: error: could not connect to server: Connection refused
+        Is the server running locally and accepting
+        connections on Unix domain socket "/var/run/postgresql/.s.PGSQL.5432"?
+codeally@8512b7e62524:~/project$ sudo /etc/init.d/postgresql restart
+ * Restarting PostgreSQL 12 database server                                                                                                                                                            [ OK ] 
+codeally@8512b7e62524:~/project$ psql --username=freecodecamp dbname=postgres
+Border style is 2.
+Title is " ".
+Pager usage is off.
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+postgres=> \d
+Did not find any relations.
+postgres=> \l
+postgres=>                                    List of databases
++----------------+--------------+----------+---------+---------+-----------------------+
+|      Name      |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++----------------+--------------+----------+---------+---------+-----------------------+
+| mario_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
+| template1      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
++----------------+--------------+----------+---------+---------+-----------------------+
+(4 rows)
+
+\c mario_database;
+You are now connected to database "mario_database" as user "freecodecamp".
+mario_database=> \d
+                        List of relations
++--------+-----------------------------+----------+--------------+
+| Schema |            Name             |   Type   |    Owner     |
++--------+-----------------------------+----------+--------------+
+| public | characters                  | table    | freecodecamp |
+| public | characters_character_id_seq | sequence | freecodecamp |
+| public | more_info                   | table    | freecodecamp |
+| public | more_info_more_info_id_seq  | sequence | freecodecamp |
+| public | sounds                      | table    | freecodecamp |
+| public | sounds_sound_id_seq         | sequence | freecodecamp |
++--------+-----------------------------+----------+--------------+
+(6 rows)
+
+mario_database=> SELECT * FROM sounds;
+                     
++----------+--------------+--------------+
+| sound_id |   filename   | character_id |
++----------+--------------+--------------+
+|        1 | its-a-me.wav |            1 |
+|        2 | yippee.wav   |            1 |
+|        3 | ha-ha.wav    |            2 |
+|        4 | oh-yeah.wav  |            2 |
++----------+--------------+--------------+
+(4 rows)
+
+mario_database=> INSERT INTO sounds(filename, character_id) VALUES('yay.wav', 3), ('woo-hoo.wav', 3);
+INSERT 0 2
+mario_database=> INSERT INTO sounds(filename, character_id) VALUES('mm-hmm.wav', 3), ('yahoo.wav', 1);
+INSERT 0 2
+mario_database=> SELECT * FROM sounds;
+                     
++----------+--------------+--------------+
+| sound_id |   filename   | character_id |
++----------+--------------+--------------+
+|        1 | its-a-me.wav |            1 |
+|        2 | yippee.wav   |            1 |
+|        3 | ha-ha.wav    |            2 |
+|        4 | oh-yeah.wav  |            2 |
+|        5 | yay.wav      |            3 |
+|        6 | woo-hoo.wav  |            3 |
+|        7 | mm-hmm.wav   |            3 |
+|        8 | yahoo.wav    |            1 |
++----------+--------------+--------------+
+(8 rows)
+
+mario_database=> CREATE TABLE actions(action_id SERIAL PRIMARY KEY); 
+CREATE TABLE
+mario_database=> ALTER TABLE actions ADD COLUMN action VARCHAR(20) NOT NULL UNIQUE;
+mario_database=> ALTER TABLE
+;
+mario_database=> INSERT INTO actions(action) VALUE('run');
+ERROR:  syntax error at or near "VALUE"
+LINE 1: INSERT INTO actions(action) VALUE('run');
+                                    ^
+mario_database=> INSERT INTO actions(action) VALUES('run');
+INSERT 0 1
+mario_database=> INSERT INTO actions(action) VALUES('jump');
+INSERT 0 1
+mario_database=> INSERT INTO actions(action) VALUES('duck');
+INSERT 0 1
+mario_database=> SELECT * FROM actions;
+mario_database=>            
++-----------+--------+
+| action_id | action |
++-----------+--------+
+|         1 | run    |
+|         2 | jump   |
+|         3 | duck   |
++-----------+--------+
+(3 rows)
+
+CREATE TABLE character_actions();
+CREATE TABLE
+mario_database=> ALTER TABLE character_actions ADD COLUMN character_id INT NOT NULL;
+ALTER TABLE
+mario_database=> ALTER TABLE character_actions ADD FOREIGN KEY(character_id) REFERENCES characters(character_id);
+mario_database=> ALTER TABLE
+SELECT * FROM character_actions;
+mario_database=>         
++--------------+
+| character_id |
++--------------+
++--------------+
+(0 rows)
+
+\d character_actions;
+mario_database=>              Table "public.character_actions"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| character_id | integer |           | not null |         |
++--------------+---------+-----------+----------+---------+
+Foreign-key constraints:
+    "character_actions_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+ALTER TABLE character_actions ADD COLUMN action_id INT NOT NULL;
+ALTER TABLE
+mario_database=> ALTER TABLE character_actions ADD FOREIGN KEY(action_id) REFERENCES actions(action_id);
+ALTER TABLE
+mario_database=> \d character_actions;
+             Table "public.character_actions"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| character_id | integer |           | not null |         |
+| action_id    | integer |           | not null |         |
++--------------+---------+-----------+----------+---------+
+Foreign-key constraints:
+    "character_actions_action_id_fkey" FOREIGN KEY (action_id) REFERENCES actions(action_id)
+    "character_actions_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+mario_database=> ALTER TABLE character_actions ADD PRIMARY KEY(character_id, action_id);
+mario_database=> ALTER TABLE
+\d character_actions;
+mario_database=>              Table "public.character_actions"
++--------------+---------+-----------+----------+---------+
+|    Column    |  Type   | Collation | Nullable | Default |
++--------------+---------+-----------+----------+---------+
+| character_id | integer |           | not null |         |
+| action_id    | integer |           | not null |         |
++--------------+---------+-----------+----------+---------+
+Indexes:
+    "character_actions_pkey" PRIMARY KEY, btree (character_id, action_id)
+Foreign-key constraints:
+    "character_actions_action_id_fkey" FOREIGN KEY (action_id) REFERENCES actions(action_id)
+    "character_actions_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+SELECT * FROM character_actions;
+              
++--------------+-----------+
+| character_id | action_id |
++--------------+-----------+
++--------------+-----------+
+(0 rows)
+
+mario_database=> INSERT INTO character_actions(character_id, action_id) VALUES(7, 1), (7, 2), (7, 3);
+INSERT 0 3
+mario_database=> SELECT * FROM character_actions;
+mario_database=>               
++--------------+-----------+
+| character_id | action_id |
++--------------+-----------+
+|            7 |         1 |
+|            7 |         2 |
+|            7 |         3 |
++--------------+-----------+
+(3 rows)
+
+SELECT * FROM chaINSERT INTO character_actions(character_id, action_id) VALUES(6, 1), (6, 2), (6, 3);
+INSERT 0 3
+mario_database=> INSERT INTO character_actions(character_id, action_id) VALUES(5, 1), (5, 2), (5, 3);
+mario_database=> INSERT 0 3
+INSERT INTO character_actions(character_id, action_id) VALUES(4, 1), (4, 2), (4, 3);
+INSERT 0 3
+mario_database=> INSERT INTO character_actions(character_id, action_id) VALUES(3, 1), (3, 2), (3, 3);
+INSERT 0 3
+mario_database=> INSERT INTO character_actions(character_id, action_id) VALUES(2, 1), (2, 2), (2, 3);
+INSERT 0 3
+mario_database=> INSERT INTO character_actions(character_id, action_id) VALUES(1, 1), (1, 2), (1, 3);
+INSERT 0 3
+mario_database=> SELECT * FROM character_actions;
+mario_database=>               
++--------------+-----------+
+| character_id | action_id |
++--------------+-----------+
+|            7 |         1 |
+|            7 |         2 |
+|            7 |         3 |
+|            6 |         1 |
+|            6 |         2 |
+|            6 |         3 |
+|            5 |         1 |
+|            5 |         2 |
+|            5 |         3 |
+|            4 |         1 |
+|            4 |         2 |
+|            4 |         3 |
+|            3 |         1 |
+|            3 |         2 |
+|            3 |         3 |
+|            2 |         1 |
+|            2 |         2 |
+|            2 |         3 |
+|            1 |         1 |
+|            1 |         2 |
+|            1 |         3 |
++--------------+-----------+
+(21 rows)
+
+\l
+                                   List of databases
++----------------+--------------+----------+---------+---------+-----------------------+
+|      Name      |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++----------------+--------------+----------+---------+---------+-----------------------+
+| mario_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
+| template1      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
++----------------+--------------+----------+---------+---------+-----------------------+
+(4 rows)
+
+mario_database=> \d
+                        List of relations
++--------+-----------------------------+----------+--------------+
+| Schema |            Name             |   Type   |    Owner     |
++--------+-----------------------------+----------+--------------+
+| public | actions                     | table    | freecodecamp |
+| public | actions_action_id_seq       | sequence | freecodecamp |
+| public | character_actions           | table    | freecodecamp |
+| public | characters                  | table    | freecodecamp |
+| public | characters_character_id_seq | sequence | freecodecamp |
+| public | more_info                   | table    | freecodecamp |
+| public | more_info_more_info_id_seq  | sequence | freecodecamp |
+| public | sounds                      | table    | freecodecamp |
+| public | sounds_sound_id_seq         | sequence | freecodecamp |
++--------+-----------------------------+----------+--------------+
+(9 rows)
+
+mario_database=> \d characters;
+mario_database=>                                              Table "public.characters"
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+|     Column     |         Type          | Collation | Nullable |                     Default                      |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+| character_id   | integer               |           | not null | nextval('characters_character_id_seq'::regclass) |
+| name           | character varying(30) |           | not null |                                                  |
+| homeland       | character varying(60) |           |          |                                                  |
+| favorite_color | character varying(30) |           |          |                                                  |
++----------------+-----------------------+-----------+----------+--------------------------------------------------+
+Indexes:
+    "characters_pkey" PRIMARY KEY, btree (character_id)
+Referenced by:
+    TABLE "character_actions" CONSTRAINT "character_actions_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+    TABLE "more_info" CONSTRAINT "more_info_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+    TABLE "sounds" CONSTRAINT "sounds_character_id_fkey" FOREIGN KEY (character_id) REFERENCES characters(character_id)
+
+SELECT * FROM characters;
+                               
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+mario_database=> SELECT * FROM more_info;
+                                     
++--------------+------------+--------------+--------------+--------------+
+| more_info_id |  birthday  | height_in_cm | weight_in_kg | character_id |
++--------------+------------+--------------+--------------+--------------+
+|            1 | 1981-07-09 |          155 |         64.5 |            1 |
+|            2 | 1983-07-14 |          175 |         48.8 |            2 |
+|            3 | 1985-10-18 |          173 |         52.2 |            3 |
+|            4 | 1950-01-10 |           66 |         35.6 |            4 |
+|            5 | 1990-10-29 |          258 |        300.0 |            5 |
+|            6 | 1989-07-31 |              |              |            6 |
+|            7 | 1990-04-13 |          162 |         59.1 |            7 |
++--------------+------------+--------------+--------------+--------------+
+(7 rows)
+
+mario_database=> SELECT * FROM characters FULL JOIN more_info ON characters.character_id = more_info.more_info_id;
+                                                                   
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+
+| character_id |  name  |     homeland     | favorite_color | more_info_id |  birthday  | height_in_cm | weight_in_kg | character_id |
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |            2 | 1983-07-14 |          175 |         48.8 |            2 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |            3 | 1985-10-18 |          173 |         52.2 |            3 |
+|            7 | Yoshi  | Dinosaur Land    | Green          |            7 | 1990-04-13 |          162 |         59.1 |            7 |
+|            6 | Daisy  | Sarasaland       | Orange         |            6 | 1989-07-31 |              |              |            6 |
+|            1 | Mario  | Mushroom Kingdom | Red            |            1 | 1981-07-09 |          155 |         64.5 |            1 |
+|            4 | Toad   | Mushroom Kingdom | Blue           |            4 | 1950-01-10 |           66 |         35.6 |            4 |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |            5 | 1990-10-29 |          258 |        300.0 |            5 |
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+
+(7 rows)
+
+mario_database=> SELECT * FROM characters FULL JOIN sounds ON characters.character_id = sounds.character_id;
+                                                   
++--------------+--------+------------------+----------------+----------+--------------+--------------+
+| character_id |  name  |     homeland     | favorite_color | sound_id |   filename   | character_id |
++--------------+--------+------------------+----------------+----------+--------------+--------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |        4 | oh-yeah.wav  |            2 |
+|            2 | Luigi  | Mushroom Kingdom | Green          |        3 | ha-ha.wav    |            2 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |        7 | mm-hmm.wav   |            3 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |        6 | woo-hoo.wav  |            3 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |        5 | yay.wav      |            3 |
+|            7 | Yoshi  | Dinosaur Land    | Green          |          |              |              |
+|            6 | Daisy  | Sarasaland       | Orange         |          |              |              |
+|            1 | Mario  | Mushroom Kingdom | Red            |        8 | yahoo.wav    |            1 |
+|            1 | Mario  | Mushroom Kingdom | Red            |        2 | yippee.wav   |            1 |
+|            1 | Mario  | Mushroom Kingdom | Red            |        1 | its-a-me.wav |            1 |
+|            4 | Toad   | Mushroom Kingdom | Blue           |          |              |              |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |          |              |              |
++--------------+--------+------------------+----------------+----------+--------------+--------------+
+(12 rows)
+
+mario_database=> SELECT * FROM characters FULL JOIN more_info ON characters.character_id = more_info.more_info_id FULL JOIN sounds ON characters.character_id = sounds.character_id;
+                                                                                        
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+----------+--------------+--------------+
+| character_id |  name  |     homeland     | favorite_color | more_info_id |  birthday  | height_in_cm | weight_in_kg | character_id | sound_id |   filename   | character_id |
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+----------+--------------+--------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |            2 | 1983-07-14 |          175 |         48.8 |            2 |        4 | oh-yeah.wav  |            2 |
+|            2 | Luigi  | Mushroom Kingdom | Green          |            2 | 1983-07-14 |          175 |         48.8 |            2 |        3 | ha-ha.wav    |            2 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |            3 | 1985-10-18 |          173 |         52.2 |            3 |        7 | mm-hmm.wav   |            3 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |            3 | 1985-10-18 |          173 |         52.2 |            3 |        6 | woo-hoo.wav  |            3 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |            3 | 1985-10-18 |          173 |         52.2 |            3 |        5 | yay.wav      |            3 |
+|            7 | Yoshi  | Dinosaur Land    | Green          |            7 | 1990-04-13 |          162 |         59.1 |            7 |          |              |              |
+|            6 | Daisy  | Sarasaland       | Orange         |            6 | 1989-07-31 |              |              |            6 |          |              |              |
+|            1 | Mario  | Mushroom Kingdom | Red            |            1 | 1981-07-09 |          155 |         64.5 |            1 |        8 | yahoo.wav    |            1 |
+|            1 | Mario  | Mushroom Kingdom | Red            |            1 | 1981-07-09 |          155 |         64.5 |            1 |        2 | yippee.wav   |            1 |
+|            1 | Mario  | Mushroom Kingdom | Red            |            1 | 1981-07-09 |          155 |         64.5 |            1 |        1 | its-a-me.wav |            1 |
+|            4 | Toad   | Mushroom Kingdom | Blue           |            4 | 1950-01-10 |           66 |         35.6 |            4 |          |              |              |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |            5 | 1990-10-29 |          258 |        300.0 |            5 |          |              |              |
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+----------+--------------+--------------+
+(12 rows)
+
+mario_database=> SELECT * FROM character_actions FULL JOIN characters ON character_action.character_id = character.character_id FULL JOIN actions ON character_actions.action_id = actions.action_id;
+ERROR:  missing FROM-clause entry for table "character_action"
+LINE 1: ... * FROM character_actions FULL JOIN characters ON character_...
+                                                             ^
+mario_database=> SELECT * FROM character_actions FULL JOIN characters ON character_actions.character_id = character.character_id FULL JOIN actions ON character_actions.action_id = actions.action_id;
+ERROR:  missing FROM-clause entry for table "character"
+LINE 1: ...IN characters ON character_actions.character_id = character....
+                                                             ^
+mario_database=> SELECT * FROM character_actions FULL JOIN characters ON character_actions.character_id = characters.character_id FULL JOIN actions ON character_actions.action_id = actions.action_id;
+                                                       
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+| character_id | action_id | character_id |  name  |     homeland     | favorite_color | action_id | action |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+|            7 |         1 |            7 | Yoshi  | Dinosaur Land    | Green          |         1 | run    |
+|            7 |         2 |            7 | Yoshi  | Dinosaur Land    | Green          |         2 | jump   |
+|            7 |         3 |            7 | Yoshi  | Dinosaur Land    | Green          |         3 | duck   |
+|            6 |         1 |            6 | Daisy  | Sarasaland       | Orange         |         1 | run    |
+|            6 |         2 |            6 | Daisy  | Sarasaland       | Orange         |         2 | jump   |
+|            6 |         3 |            6 | Daisy  | Sarasaland       | Orange         |         3 | duck   |
+|            5 |         1 |            5 | Bowser | Koopa Kingdom    | Yellow         |         1 | run    |
+|            5 |         2 |            5 | Bowser | Koopa Kingdom    | Yellow         |         2 | jump   |
+|            5 |         3 |            5 | Bowser | Koopa Kingdom    | Yellow         |         3 | duck   |
+|            4 |         1 |            4 | Toad   | Mushroom Kingdom | Blue           |         1 | run    |
+|            4 |         2 |            4 | Toad   | Mushroom Kingdom | Blue           |         2 | jump   |
+|            4 |         3 |            4 | Toad   | Mushroom Kingdom | Blue           |         3 | duck   |
+|            3 |         1 |            3 | Peach  | Mushroom Kingdom | Pink           |         1 | run    |
+|            3 |         2 |            3 | Peach  | Mushroom Kingdom | Pink           |         2 | jump   |
+|            3 |         3 |            3 | Peach  | Mushroom Kingdom | Pink           |         3 | duck   |
+|            2 |         1 |            2 | Luigi  | Mushroom Kingdom | Green          |         1 | run    |
+|            2 |         2 |            2 | Luigi  | Mushroom Kingdom | Green          |         2 | jump   |
+|            2 |         3 |            2 | Luigi  | Mushroom Kingdom | Green          |         3 | duck   |
+|            1 |         1 |            1 | Mario  | Mushroom Kingdom | Red            |         1 | run    |
+|            1 |         2 |            1 | Mario  | Mushroom Kingdom | Red            |         2 | jump   |
+|            1 |         3 |            1 | Mario  | Mushroom Kingdom | Red            |         3 | duck   |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+(21 rows)
+
+mario_database=> SELECT * FROM characters_actions FULL JOIN more_info ON character_actions.character_id = more_info.more_info_id FULL JOIN characters ON characters_actions.character_id = characters.character_id;
+ERROR:  relation "characters_actions" does not exist
+LINE 1: SELECT * FROM characters_actions FULL JOIN more_info ON char...
+                      ^
+mario_database=> SELECT * FROM characters_actions FULL JOIN more_info ON character_actions.character_id = more_info.more_info_id FULL JOIN characters ON character_actions.character_id = characters.character_id;
+ERROR:  relation "characters_actions" does not exist
+LINE 1: SELECT * FROM characters_actions FULL JOIN more_info ON char...
+                      ^
+mario_database=> SELECT * FROM more_info;     mario_database=>                                      
++--------------+------------+--------------+--------------+--------------+
+| more_info_id |  birthday  | height_in_cm | weight_in_kg | character_id |
++--------------+------------+--------------+--------------+--------------+
+|            1 | 1981-07-09 |          155 |         64.5 |            1 |
+|            2 | 1983-07-14 |          175 |         48.8 |            2 |
+|            3 | 1985-10-18 |          173 |         52.2 |            3 |
+|            4 | 1950-01-10 |           66 |         35.6 |            4 |
+|            5 | 1990-10-29 |          258 |        300.0 |            5 |
+|            6 | 1989-07-31 |              |              |            6 |
+|            7 | 1990-04-13 |          162 |         59.1 |            7 |
++--------------+------------+--------------+--------------+--------------+
+(7 rows)
+    more_info;        SELECT * FROM character_actions;                        
++--------------+-----------+
+| character_id | action_id |
++--------------+-----------+
+|            7 |         1 |
+|            7 |         2 |
+|            7 |         3 |
+|            6 |         1 |
+|            6 |         2 |
+|            6 |         3 |
+|            5 |         1 |
+|            5 |         2 |
+|            5 |         3 |
+|            4 |         1 |
+|            4 |         2 |
+|            4 |         3 |
+|            3 |         1 |
+|            3 |         2 |
+|            3 |         3 |
+|            2 |         1 |
+|            2 |         2 |
+|            2 |         3 |
+|            1 |         1 |
+|            1 |         2 |
+|            1 |         3 |
++--------------+-----------+
+(21 rows)
+
+mario_database=> SELECT * FROM characters;
+                               
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+mario_database=> SELECT * FROM character_actions
+mario_database-> FULL JOIN characters ON character_actions.character_id = characters.character_id
+mario_database-> FULL JOIN action ON character_action.action_id = action.action_id;
+ERROR:  relation "action" does not exist
+LINE 3: FULL JOIN action ON character_action.action_id = action.acti...
+                  ^
+mario_database=> SELECT * FROM character_actions
+FULL JOIN characters ON character_actions.character_id = characters.character_id
+FULL JOIN actions ON character_action.action_id = actions.action_id;
+ERROR:  missing FROM-clause entry for table "character_action"
+LINE 3: FULL JOIN actions ON character_action.action_id = actions.ac...
+                             ^
+mario_database=> SELECT * FROM character_actions
+FULL JOIN characters ON character_actions.character_id = characters.character_id
+FULL JOIN actions ON character_actions.action_id = actions.action_id;
+                                                       
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+| character_id | action_id | character_id |  name  |     homeland     | favorite_color | action_id | action |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+|            7 |         1 |            7 | Yoshi  | Dinosaur Land    | Green          |         1 | run    |
+|            7 |         2 |            7 | Yoshi  | Dinosaur Land    | Green          |         2 | jump   |
+|            7 |         3 |            7 | Yoshi  | Dinosaur Land    | Green          |         3 | duck   |
+|            6 |         1 |            6 | Daisy  | Sarasaland       | Orange         |         1 | run    |
+|            6 |         2 |            6 | Daisy  | Sarasaland       | Orange         |         2 | jump   |
+|            6 |         3 |            6 | Daisy  | Sarasaland       | Orange         |         3 | duck   |
+|            5 |         1 |            5 | Bowser | Koopa Kingdom    | Yellow         |         1 | run    |
+|            5 |         2 |            5 | Bowser | Koopa Kingdom    | Yellow         |         2 | jump   |
+|            5 |         3 |            5 | Bowser | Koopa Kingdom    | Yellow         |         3 | duck   |
+|            4 |         1 |            4 | Toad   | Mushroom Kingdom | Blue           |         1 | run    |
+|            4 |         2 |            4 | Toad   | Mushroom Kingdom | Blue           |         2 | jump   |
+|            4 |         3 |            4 | Toad   | Mushroom Kingdom | Blue           |         3 | duck   |
+|            3 |         1 |            3 | Peach  | Mushroom Kingdom | Pink           |         1 | run    |
+|            3 |         2 |            3 | Peach  | Mushroom Kingdom | Pink           |         2 | jump   |
+|            3 |         3 |            3 | Peach  | Mushroom Kingdom | Pink           |         3 | duck   |
+|            2 |         1 |            2 | Luigi  | Mushroom Kingdom | Green          |         1 | run    |
+|            2 |         2 |            2 | Luigi  | Mushroom Kingdom | Green          |         2 | jump   |
+|            2 |         3 |            2 | Luigi  | Mushroom Kingdom | Green          |         3 | duck   |
+|            1 |         1 |            1 | Mario  | Mushroom Kingdom | Red            |         1 | run    |
+|            1 |         2 |            1 | Mario  | Mushroom Kingdom | Red            |         2 | jump   |
+|            1 |         3 |            1 | Mario  | Mushroom Kingdom | Red            |         3 | duck   |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+(21 rows)
+
+mario_database=> SELECT * FROM characters_actions FULL JOIN more_info ON character_actions.character_id = more_info.more_info_id FULL JOIN characters ON character_actions.character_id = characters.character_id;
+ERROR:  relation "characters_actions" does not exist
+LINE 1: SELECT * FROM characters_actions FULL JOIN more_info ON char...
+                      ^
+mario_database=> SELECT * FROM characters FULL JOIN more_info ON characters.character_id = more_info.character_id;
+mario_database=>                                                                    
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+
+| character_id |  name  |     homeland     | favorite_color | more_info_id |  birthday  | height_in_cm | weight_in_kg | character_id |
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |            2 | 1983-07-14 |          175 |         48.8 |            2 |
+|            3 | Peach  | Mushroom Kingdom | Pink           |            3 | 1985-10-18 |          173 |         52.2 |            3 |
+|            7 | Yoshi  | Dinosaur Land    | Green          |            7 | 1990-04-13 |          162 |         59.1 |            7 |
+|            6 | Daisy  | Sarasaland       | Orange         |            6 | 1989-07-31 |              |              |            6 |
+|            1 | Mario  | Mushroom Kingdom | Red            |            1 | 1981-07-09 |          155 |         64.5 |            1 |
+|            4 | Toad   | Mushroom Kingdom | Blue           |            4 | 1950-01-10 |           66 |         35.6 |            4 |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |            5 | 1990-10-29 |          258 |        300.0 |            5 |
++--------------+--------+------------------+----------------+--------------+------------+--------------+--------------+--------------+
+(7 rows)
+
+SELECT * FROM character_actions FULL JOIN characters ON character_actions.character_id = characters.character_id FULL JOIN actions ON character_actions.action_id = actions.action_id;
+                                                       
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+| character_id | action_id | character_id |  name  |     homeland     | favorite_color | action_id | action |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+|            7 |         1 |            7 | Yoshi  | Dinosaur Land    | Green          |         1 | run    |
+|            7 |         2 |            7 | Yoshi  | Dinosaur Land    | Green          |         2 | jump   |
+|            7 |         3 |            7 | Yoshi  | Dinosaur Land    | Green          |         3 | duck   |
+|            6 |         1 |            6 | Daisy  | Sarasaland       | Orange         |         1 | run    |
+|            6 |         2 |            6 | Daisy  | Sarasaland       | Orange         |         2 | jump   |
+|            6 |         3 |            6 | Daisy  | Sarasaland       | Orange         |         3 | duck   |
+|            5 |         1 |            5 | Bowser | Koopa Kingdom    | Yellow         |         1 | run    |
+|            5 |         2 |            5 | Bowser | Koopa Kingdom    | Yellow         |         2 | jump   |
+|            5 |         3 |            5 | Bowser | Koopa Kingdom    | Yellow         |         3 | duck   |
+|            4 |         1 |            4 | Toad   | Mushroom Kingdom | Blue           |         1 | run    |
+|            4 |         2 |            4 | Toad   | Mushroom Kingdom | Blue           |         2 | jump   |
+|            4 |         3 |            4 | Toad   | Mushroom Kingdom | Blue           |         3 | duck   |
+|            3 |         1 |            3 | Peach  | Mushroom Kingdom | Pink           |         1 | run    |
+|            3 |         2 |            3 | Peach  | Mushroom Kingdom | Pink           |         2 | jump   |
+|            3 |         3 |            3 | Peach  | Mushroom Kingdom | Pink           |         3 | duck   |
+|            2 |         1 |            2 | Luigi  | Mushroom Kingdom | Green          |         1 | run    |
+|            2 |         2 |            2 | Luigi  | Mushroom Kingdom | Green          |         2 | jump   |
+|            2 |         3 |            2 | Luigi  | Mushroom Kingdom | Green          |         3 | duck   |
+|            1 |         1 |            1 | Mario  | Mushroom Kingdom | Red            |         1 | run    |
+|            1 |         2 |            1 | Mario  | Mushroom Kingdom | Red            |         2 | jump   |
+|            1 |         3 |            1 | Mario  | Mushroom Kingdom | Red            |         3 | duck   |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+(21 rows)
+
+mario_database=> SELECT * FROM characters;
+mario_database=>                                
++--------------+--------+------------------+----------------+
+| character_id |  name  |     homeland     | favorite_color |
++--------------+--------+------------------+----------------+
+|            2 | Luigi  | Mushroom Kingdom | Green          |
+|            3 | Peach  | Mushroom Kingdom | Pink           |
+|            7 | Yoshi  | Dinosaur Land    | Green          |
+|            6 | Daisy  | Sarasaland       | Orange         |
+|            1 | Mario  | Mushroom Kingdom | Red            |
+|            4 | Toad   | Mushroom Kingdom | Blue           |
+|            5 | Bowser | Koopa Kingdom    | Yellow         |
++--------------+--------+------------------+----------------+
+(7 rows)
+
+SELECT * FROM actions;
+           
++-----------+--------+
+| action_id | action |
++-----------+--------+
+|         1 | run    |
+|         2 | jump   |
+|         3 | duck   |
++-----------+--------+
+(3 rows)
+
+mario_database=> SELECT * FROM character_actions;
+              
++--------------+-----------+
+| character_id | action_id |
++--------------+-----------+
+|            7 |         1 |
+|            7 |         2 |
+|            7 |         3 |
+|            6 |         1 |
+|            6 |         2 |
+|            6 |         3 |
+|            5 |         1 |
+|            5 |         2 |
+|            5 |         3 |
+|            4 |         1 |
+|            4 |         2 |
+|            4 |         3 |
+|            3 |         1 |
+|            3 |         2 |
+|            3 |         3 |
+|            2 |         1 |
+|            2 |         2 |
+|            2 |         3 |
+|            1 |         1 |
+|            1 |         2 |
+|            1 |         3 |
++--------------+-----------+
+(21 rows)
+
+mario_database=> SELECT * FROM character_actions
+mario_database-> FULL JOIN characters ON character_actions.character_id = characters.character_id
+mario_database-> FULL JOIN actions ON character_actions.action_id = actions.action_id;
+mario_database=>                                                        
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+| character_id | action_id | character_id |  name  |     homeland     | favorite_color | action_id | action |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+|            7 |         1 |            7 | Yoshi  | Dinosaur Land    | Green          |         1 | run    |
+|            7 |         2 |            7 | Yoshi  | Dinosaur Land    | Green          |         2 | jump   |
+|            7 |         3 |            7 | Yoshi  | Dinosaur Land    | Green          |         3 | duck   |
+|            6 |         1 |            6 | Daisy  | Sarasaland       | Orange         |         1 | run    |
+|            6 |         2 |            6 | Daisy  | Sarasaland       | Orange         |         2 | jump   |
+|            6 |         3 |            6 | Daisy  | Sarasaland       | Orange         |         3 | duck   |
+|            5 |         1 |            5 | Bowser | Koopa Kingdom    | Yellow         |         1 | run    |
+|            5 |         2 |            5 | Bowser | Koopa Kingdom    | Yellow         |         2 | jump   |
+|            5 |         3 |            5 | Bowser | Koopa Kingdom    | Yellow         |         3 | duck   |
+|            4 |         1 |            4 | Toad   | Mushroom Kingdom | Blue           |         1 | run    |
+|            4 |         2 |            4 | Toad   | Mushroom Kingdom | Blue           |         2 | jump   |
+|            4 |         3 |            4 | Toad   | Mushroom Kingdom | Blue           |         3 | duck   |
+|            3 |         1 |            3 | Peach  | Mushroom Kingdom | Pink           |         1 | run    |
+|            3 |         2 |            3 | Peach  | Mushroom Kingdom | Pink           |         2 | jump   |
+|            3 |         3 |            3 | Peach  | Mushroom Kingdom | Pink           |         3 | duck   |
+|            2 |         1 |            2 | Luigi  | Mushroom Kingdom | Green          |         1 | run    |
+|            2 |         2 |            2 | Luigi  | Mushroom Kingdom | Green          |         2 | jump   |
+|            2 |         3 |            2 | Luigi  | Mushroom Kingdom | Green          |         3 | duck   |
+|            1 |         1 |            1 | Mario  | Mushroom Kingdom | Red            |         1 | run    |
+|            1 |         2 |            1 | Mario  | Mushroom Kingdom | Red            |         2 | jump   |
+|            1 |         3 |            1 | Mario  | Mushroom Kingdom | Red            |         3 | duck   |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+(21 rows)
+
+mario_database=> SELECT * FROM character_actions FULL JOIN characters ON character_actions.character_id = characters.character_id FULL JOIN actions ON character_actions.action_id = actions.action_id;
+                                                       
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+| character_id | action_id | character_id |  name  |     homeland     | favorite_color | action_id | action |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+|            7 |         1 |            7 | Yoshi  | Dinosaur Land    | Green          |         1 | run    |
+|            7 |         2 |            7 | Yoshi  | Dinosaur Land    | Green          |         2 | jump   |
+|            7 |         3 |            7 | Yoshi  | Dinosaur Land    | Green          |         3 | duck   |
+|            6 |         1 |            6 | Daisy  | Sarasaland       | Orange         |         1 | run    |
+|            6 |         2 |            6 | Daisy  | Sarasaland       | Orange         |         2 | jump   |
+|            6 |         3 |            6 | Daisy  | Sarasaland       | Orange         |         3 | duck   |
+|            5 |         1 |            5 | Bowser | Koopa Kingdom    | Yellow         |         1 | run    |
+|            5 |         2 |            5 | Bowser | Koopa Kingdom    | Yellow         |         2 | jump   |
+|            5 |         3 |            5 | Bowser | Koopa Kingdom    | Yellow         |         3 | duck   |
+|            4 |         1 |            4 | Toad   | Mushroom Kingdom | Blue           |         1 | run    |
+|            4 |         2 |            4 | Toad   | Mushroom Kingdom | Blue           |         2 | jump   |
+|            4 |         3 |            4 | Toad   | Mushroom Kingdom | Blue           |         3 | duck   |
+|            3 |         1 |            3 | Peach  | Mushroom Kingdom | Pink           |         1 | run    |
+|            3 |         2 |            3 | Peach  | Mushroom Kingdom | Pink           |         2 | jump   |
+|            3 |         3 |            3 | Peach  | Mushroom Kingdom | Pink           |         3 | duck   |
+|            2 |         1 |            2 | Luigi  | Mushroom Kingdom | Green          |         1 | run    |
+|            2 |         2 |            2 | Luigi  | Mushroom Kingdom | Green          |         2 | jump   |
+|            2 |         3 |            2 | Luigi  | Mushroom Kingdom | Green          |         3 | duck   |
+|            1 |         1 |            1 | Mario  | Mushroom Kingdom | Red            |         1 | run    |
+|            1 |         2 |            1 | Mario  | Mushroom Kingdom | Red            |         2 | jump   |
+|            1 |         3 |            1 | Mario  | Mushroom Kingdom | Red            |         3 | duck   |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+(21 rows)
+
+mario_database=> SELECT * FROM characters
+mario_database-> ;
+FATAL:  terminating connection due to administrator command
+server closed the connection unexpectedly
+        This probably means the server terminated abnormally
+        before or while processing the request.
+The connection to the server was lost. Attempting reset: Succeeded.
+mario_database=> psql --username=freecodecamp dbname=postgresmario_database-> \q
+codeally@8512b7e62524:~/project$ psql --username=freecodecamp dbname=postgres
+Border style is 2.
+Title is " ".
+Pager usage is off.
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+postgres=> \l
+                                   List of databases
++----------------+--------------+----------+---------+---------+-----------------------+
+|      Name      |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++----------------+--------------+----------+---------+---------+-----------------------+
+| mario_database | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres       | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
+| template1      | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|                |              |          |         |         | postgres=CTc/postgres |
++----------------+--------------+----------+---------+---------+-----------------------+
+(4 rows)
+
+postgres=> \c mario_database;
+You are now connected to database "mario_database" as user "freecodecamp".
+mario_database=> SELECT * FROM character_actions FULL JOIN characters ON character_actions.character_id = characters.character_id FULL JOIN actions ON character_actions.action_id = actions.action_id;
+                                                       
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+| character_id | action_id | character_id |  name  |     homeland     | favorite_color | action_id | action |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+|            7 |         1 |            7 | Yoshi  | Dinosaur Land    | Green          |         1 | run    |
+|            7 |         2 |            7 | Yoshi  | Dinosaur Land    | Green          |         2 | jump   |
+|            7 |         3 |            7 | Yoshi  | Dinosaur Land    | Green          |         3 | duck   |
+|            6 |         1 |            6 | Daisy  | Sarasaland       | Orange         |         1 | run    |
+|            6 |         2 |            6 | Daisy  | Sarasaland       | Orange         |         2 | jump   |
+|            6 |         3 |            6 | Daisy  | Sarasaland       | Orange         |         3 | duck   |
+|            5 |         1 |            5 | Bowser | Koopa Kingdom    | Yellow         |         1 | run    |
+|            5 |         2 |            5 | Bowser | Koopa Kingdom    | Yellow         |         2 | jump   |
+|            5 |         3 |            5 | Bowser | Koopa Kingdom    | Yellow         |         3 | duck   |
+|            4 |         1 |            4 | Toad   | Mushroom Kingdom | Blue           |         1 | run    |
+|            4 |         2 |            4 | Toad   | Mushroom Kingdom | Blue           |         2 | jump   |
+|            4 |         3 |            4 | Toad   | Mushroom Kingdom | Blue           |         3 | duck   |
+|            3 |         1 |            3 | Peach  | Mushroom Kingdom | Pink           |         1 | run    |
+|            3 |         2 |            3 | Peach  | Mushroom Kingdom | Pink           |         2 | jump   |
+|            3 |         3 |            3 | Peach  | Mushroom Kingdom | Pink           |         3 | duck   |
+|            2 |         1 |            2 | Luigi  | Mushroom Kingdom | Green          |         1 | run    |
+|            2 |         2 |            2 | Luigi  | Mushroom Kingdom | Green          |         2 | jump   |
+|            2 |         3 |            2 | Luigi  | Mushroom Kingdom | Green          |         3 | duck   |
+|            1 |         1 |            1 | Mario  | Mushroom Kingdom | Red            |         1 | run    |
+|            1 |         2 |            1 | Mario  | Mushroom Kingdom | Red            |         2 | jump   |
+|            1 |         3 |            1 | Mario  | Mushroom Kingdom | Red            |         3 | duck   |
++--------------+-----------+--------------+--------+------------------+----------------+-----------+--------+
+(21 rows)
+
+mario_database=> \q (to quit)

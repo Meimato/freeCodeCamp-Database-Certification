@@ -1,0 +1,491 @@
+codeally@b8666598981b:~/project$ psql --username=freecodecamp --dbname=periodic_table
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+periodic_table=> \d
+             List of relations
+ Schema |    Name    | Type  |    Owner     
+--------+------------+-------+--------------
+ public | elements   | table | freecodecamp
+ public | properties | table | freecodecamp
+(2 rows)
+
+periodic_table=> SELECT * FROM elements;
+ atomic_number | symbol |   name    
+---------------+--------+-----------
+             1 | H      | Hydrogen
+             2 | he     | Helium
+             3 | li     | Lithium
+             4 | Be     | Beryllium
+             5 | B      | Boron
+             6 | C      | Carbon
+             7 | N      | Nitrogen
+             8 | O      | Oxygen
+          1000 | mT     | moTanium
+(9 rows)
+
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    |  weight   | melting_point | boiling_point 
+---------------+-----------+-----------+---------------+---------------
+             1 | nonmetal  |  1.008000 |        -259.1 |        -252.9
+             2 | nonmetal  |  4.002600 |        -272.2 |          -269
+             3 | metal     |  6.940000 |        180.54 |          1342
+             4 | metal     |  9.012200 |          1287 |          2470
+             5 | metalloid | 10.810000 |          2075 |          4000
+             6 | nonmetal  | 12.011000 |          3550 |          4027
+             7 | nonmetal  | 14.007000 |        -210.1 |        -195.8
+             8 | nonmetal  | 15.999000 |          -218 |          -183
+          1000 | metalloid |  1.000000 |            10 |           100
+(9 rows)
+
+periodic_table=> ALTER TABLE properties RENAME COLUMN weight TO atomic_mass;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties RENAME COLUMN melting_point TO meltin_point_celsius;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties RENAME COLUMN boiling_point TO boiling_point_celsius;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties RENAME COLUMN meltin_point_celsius TO melting_point_celsius;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties ALTER COLUMN melting_point_celsius SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties ALTER COLUMN boiling_point_celsius SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE elements ALTER COLUMN symbol SET UNIQUE;
+ERROR:  syntax error at or near "UNIQUE"
+LINE 1: ALTER TABLE elements ALTER COLUMN symbol SET UNIQUE;
+                                                     ^
+periodic_table=> ALTER TABLE elements ADD UNIQUE(symbol, name);
+ALTER TABLE
+periodic_table=> ALTER TABLE elements ALTER COLUMN symbol SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE elements ALTER COLUMN name SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties ADD CONSTRAINT atomic_number FOREIGN KEY(atomic_number) REFERENCES elements(atomic_number);
+ALTER TABLE
+periodic_table=> CREATE TABLE types( type_id INT PRIMARY KEY, type VARCHAR(20) NOT NULL);
+CREATE TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius 
+---------------+-----------+-------------+-----------------------+-----------------------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269
+             3 | metal     |    6.940000 |                180.54 |                  1342
+             4 | metal     |    9.012200 |                  1287 |                  2470
+             5 | metalloid |   10.810000 |                  2075 |                  4000
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183
+          1000 | metalloid |    1.000000 |                    10 |                   100
+(9 rows)
+
+periodic_table=> INSERT INTO types(type) VALUES('nonmetal'), ('metal'), ('metalloid');
+ERROR:  null value in column "type_id" violates not-null constraint
+DETAIL:  Failing row contains (null, nonmetal).
+periodic_table=> INSERT INTO types(type) VALUES(1, 'nonmetal'), (2, 'metal'), (3, 'metalloid');
+ERROR:  INSERT has more expressions than target columns
+LINE 1: INSERT INTO types(type) VALUES(1, 'nonmetal'), (2, 'metal'),...
+                                          ^
+periodic_table=> INSERT INTO types(type) VALUES('1', 'nonmetal'), ('2', 'metal'), ('3', 'metalloid');
+ERROR:  INSERT has more expressions than target columns
+LINE 1: INSERT INTO types(type) VALUES('1', 'nonmetal'), ('2', 'meta...
+                                            ^
+periodic_table=> INSERT INTO types(type) VALUES('1, nonmetal'), ('2, metal'), ('3, metalloid');
+ERROR:  null value in column "type_id" violates not-null constraint
+DETAIL:  Failing row contains (null, 1, nonmetal).
+periodic_table=> INSERT INTO types(type_id, type) VALUES('1', 'nonmetal'), ('2', 'metal'), ('3', 'metalloid');
+INSERT 0 3
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id FOREIGN KEY(type_id) REFERENCES types(type_id);
+ERROR:  syntax error at or near "FOREIGN"
+LINE 1: ALTER TABLE properties ADD COLUMN type_id FOREIGN KEY(type_i...
+                                                  ^
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id INT NOT NULL;
+ERROR:  column "type_id" contains null values
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius 
+---------------+-----------+-------------+-----------------------+-----------------------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269
+             3 | metal     |    6.940000 |                180.54 |                  1342
+             4 | metal     |    9.012200 |                  1287 |                  2470
+             5 | metalloid |   10.810000 |                  2075 |                  4000
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183
+          1000 | metalloid |    1.000000 |                    10 |                   100
+(9 rows)
+
+periodic_table=> \d properties;
+                           Table "public.properties"
+        Column         |         Type          | Collation | Nullable | Default 
+-----------------------+-----------------------+-----------+----------+---------
+ atomic_number         | integer               |           | not null | 
+ type                  | character varying(30) |           |          | 
+ atomic_mass           | numeric(9,6)          |           | not null | 
+ melting_point_celsius | numeric               |           | not null | 
+ boiling_point_celsius | numeric               |           | not null | 
+Indexes:
+    "properties_pkey" PRIMARY KEY, btree (atomic_number)
+    "properties_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+Foreign-key constraints:
+    "atomic_number" FOREIGN KEY (atomic_number) REFERENCES elements(atomic_number)
+
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id ADD FOREIGN KEY(type_id) REFERENCES types(type_id);
+ERROR:  syntax error at or near "FOREIGN"
+LINE 1: ALTER TABLE properties ADD COLUMN type_id ADD FOREIGN KEY(ty...
+                                                      ^
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id ADD FOREIGN KEY(type_id) REFERENCES types(type_id) ON DELETE CASCADE;
+ERROR:  syntax error at or near "FOREIGN"
+LINE 1: ALTER TABLE properties ADD COLUMN type_id ADD FOREIGN KEY(ty...
+                                                      ^
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id, ADD FOREIGN KEY(type_id) REFERENCES types(type_id) ON DELETE CASCADE;
+ERROR:  syntax error at or near ","
+LINE 1: ALTER TABLE properties ADD COLUMN type_id, ADD FOREIGN KEY(t...
+                                                 ^
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id INT NOT NULL ADD FOREIGN KEY(type_id) REFERENCES types(type_id);
+ERROR:  syntax error at or near "ADD"
+LINE 1: ... TABLE properties ADD COLUMN type_id INT NOT NULL ADD FOREIG...
+                                                             ^
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id INT NOT NULL ADD CONSTRAINT type_id FOREIGN KEY(type_id) REFERENCES types(type_id);
+ERROR:  syntax error at or near "ADD"
+LINE 1: ... TABLE properties ADD COLUMN type_id INT NOT NULL ADD CONSTR...
+                                                             ^
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id INT NOT NULL, ADD CONSTRAINT type_id FOREIGN KEY(type_id) REFERENCES types(type_id);
+ERROR:  column "type_id" contains null values
+periodic_table=> SELECT * FROM properties
+periodic_table-> ;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius 
+---------------+-----------+-------------+-----------------------+-----------------------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269
+             3 | metal     |    6.940000 |                180.54 |                  1342
+             4 | metal     |    9.012200 |                  1287 |                  2470
+             5 | metalloid |   10.810000 |                  2075 |                  4000
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183
+          1000 | metalloid |    1.000000 |                    10 |                   100
+(9 rows)
+
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id INT, ADD CONSTRAINT type_id FOREIGN KEY(type_id) REFERENCES types(type_id);
+ALTER TABLE
+periodic_table=> SELECT * FROM properties                                                                                             
+;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |        
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |        
+             3 | metal     |    6.940000 |                180.54 |                  1342 |        
+             4 | metal     |    9.012200 |                  1287 |                  2470 |        
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |        
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |        
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |        
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |        
+          1000 | metalloid |    1.000000 |                    10 |                   100 |        
+(9 rows)
+
+periodic_table=> UPDATE properties SET type_id = 1 WHERE type = 'nonmetal';
+UPDATE 5
+periodic_table=> UPDATE properties SET type_id = 2 WHERE type = 'metal';
+UPDATE 2
+periodic_table=> UPDATE properties SET type_id = 3 WHERE type = 'metalloid';
+UPDATE 2
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN type_id SET NOT NULL;
+ALTER TABLE
+periodic_table=> SELECT * FROM elements;
+ atomic_number | symbol |   name    
+---------------+--------+-----------
+             1 | H      | Hydrogen
+             2 | he     | Helium
+             3 | li     | Lithium
+             4 | Be     | Beryllium
+             5 | B      | Boron
+             6 | C      | Carbon
+             7 | N      | Nitrogen
+             8 | O      | Oxygen
+          1000 | mT     | moTanium
+(9 rows)
+
+periodic_table=> SELECT version();
+                                                               version                                                               
+-------------------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, 64-bit
+(1 row)
+
+periodic_table=> SELECT UPPER(LEFT(symbol,1)) FROM elements;
+ upper 
+-------
+ H
+ H
+ L
+ B
+ B
+ C
+ N
+ O
+ M
+(9 rows)
+
+periodic_table=> SELECT UPPER(LEFT(symbol,1))+LOWER(SUBSTRING(symbol,2,LEN(symbol)) FROM elements;
+periodic_table(> ^C
+periodic_table=> SELECT UPPER(LEFT(symbol,1))+LOWER(SUBSTRING(symbol,2,LEN(symbol))) FROM elements;
+ERROR:  function len(character varying) does not exist
+LINE 1: ...CT UPPER(LEFT(symbol,1))+LOWER(SUBSTRING(symbol,2,LEN(symbol...
+                                                             ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> SELECT UPPER(LEFT(symbol,1))+LOWER(SUBSTRING(symbol,2,LENGTH(symbol))) FROM elements;
+ERROR:  operator does not exist: text + text
+LINE 1: SELECT UPPER(LEFT(symbol,1))+LOWER(SUBSTRING(symbol,2,LENGTH...
+                                    ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> SELECT UPPER(LEFT(symbol,1)) LOWER(SUBSTRING(symbol,2,LENGTH(symbol))) FROM elements;
+ERROR:  syntax error at or near "("
+LINE 1: SELECT UPPER(LEFT(symbol,1)) LOWER(SUBSTRING(symbol,2,LENGTH...
+                                          ^
+periodic_table=> SELECT UPPER(LEFT(symbol,1)), LOWER(SUBSTRING(symbol,2,LENGTH(symbol))) FROM elements;
+ upper | lower 
+-------+-------
+ H     | 
+ H     | e
+ L     | i
+ B     | e
+ B     | 
+ C     | 
+ N     | 
+ O     | 
+ M     | t
+(9 rows)
+
+periodic_table=> SELECT UPPER(LEFT(symbol,1)) + LOWER(SUBSTRING(symbol,2,LENGTH(symbol))) FROM elements;
+ERROR:  operator does not exist: text + text
+LINE 1: SELECT UPPER(LEFT(symbol,1)) + LOWER(SUBSTRING(symbol,2,LENG...
+                                     ^
+HINT:  No operator matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> SELECT CONCAT(UPPER(LEFT(symbol,1)), LOWER(SUBSTRING(symbol,2,LENGTH(symbol)))) FROM elements;
+ concat 
+--------
+ H
+ He
+ Li
+ Be
+ B
+ C
+ N
+ O
+ Mt
+(9 rows)
+
+periodic_table=> UPDATE elements SET symbol = CONCAT( UPPER( LEFT( symbol,1 ) ), LOWER( SUBSTRING( symbol, 2, LENGTH( symbol ) ) ) ) FROM elements;
+ERROR:  table name "elements" specified more than once
+periodic_table=> UPDATE elements SET symbol = CONCAT( UPPER( LEFT( symbol,1 ) ), LOWER( SUBSTRING( symbol, 2, LENGTH( symbol ) ) ) );
+UPDATE 9
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass DECIMAL(7,4);
+ERROR:  syntax error at or near "DECIMAL"
+LINE 1: ALTER TABLE properties ALTER COLUMN atomic_mass DECIMAL(7,4)...
+                                                        ^
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass NUMERIC(7,4);
+ERROR:  syntax error at or near "NUMERIC"
+LINE 1: ALTER TABLE properties ALTER COLUMN atomic_mass NUMERIC(7,4)...
+                                                        ^
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass SET DECIMAL(7,4);
+ERROR:  syntax error at or near "DECIMAL"
+LINE 1: ...TER TABLE properties ALTER COLUMN atomic_mass SET DECIMAL(7,...
+                                                             ^
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass SET NUMERIC(7,4);
+ERROR:  syntax error at or near "NUMERIC"
+LINE 1: ...TER TABLE properties ALTER COLUMN atomic_mass SET NUMERIC(7,...
+                                                             ^
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass NUMERIC(7,4);
+ERROR:  syntax error at or near "NUMERIC"
+LINE 1: ALTER TABLE properties ALTER COLUMN atomic_mass NUMERIC(7,4)...
+                                                        ^
+periodic_table=> ALTER TABLE properties MODIFY COLUMN atomic_mass NUMERIC(7,4);
+ERROR:  syntax error at or near "MODIFY"
+LINE 1: ALTER TABLE properties MODIFY COLUMN atomic_mass NUMERIC(7,4...
+                               ^
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE NUMERIC(7,4);
+ALTER TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |      1.0080 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |      4.0026 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |     12.0110 |                  3550 |                  4027 |       1
+             7 | nonmetal  |     14.0070 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |     15.9990 |                  -218 |                  -183 |       1
+             3 | metal     |      6.9400 |                180.54 |                  1342 |       2
+             4 | metal     |      9.0122 |                  1287 |                  2470 |       2
+             5 | metalloid |     10.8100 |                  2075 |                  4000 |       3
+          1000 | metalloid |      1.0000 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> SELECT * FROM elements;
+ atomic_number | symbol |   name    
+---------------+--------+-----------
+             1 | H      | Hydrogen
+             2 | He     | Helium
+             3 | Li     | Lithium
+             4 | Be     | Beryllium
+             5 | B      | Boron
+             6 | C      | Carbon
+             7 | N      | Nitrogen
+             8 | O      | Oxygen
+          1000 | Mt     | moTanium
+(9 rows)
+
+periodic_table=> INSERT INTO elements(atomic_number, symbol, name) VALUES('9', 'F', 'Fluorine');
+INSERT 0 1
+periodic_table=> SELECT * FROM elements;
+ atomic_number | symbol |   name    
+---------------+--------+-----------
+             1 | H      | Hydrogen
+             2 | He     | Helium
+             3 | Li     | Lithium
+             4 | Be     | Beryllium
+             5 | B      | Boron
+             6 | C      | Carbon
+             7 | N      | Nitrogen
+             8 | O      | Oxygen
+          1000 | Mt     | moTanium
+             9 | F      | Fluorine
+(10 rows)
+
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |      1.0080 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |      4.0026 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |     12.0110 |                  3550 |                  4027 |       1
+             7 | nonmetal  |     14.0070 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |     15.9990 |                  -218 |                  -183 |       1
+             3 | metal     |      6.9400 |                180.54 |                  1342 |       2
+             4 | metal     |      9.0122 |                  1287 |                  2470 |       2
+             5 | metalloid |     10.8100 |                  2075 |                  4000 |       3
+          1000 | metalloid |      1.0000 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> INSERT INTO properties(atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id) VALUES('9', 'nonmetal', '18.998', '-220', '-188.1', '1');
+INSERT 0 1
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |      1.0080 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |      4.0026 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |     12.0110 |                  3550 |                  4027 |       1
+             7 | nonmetal  |     14.0070 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |     15.9990 |                  -218 |                  -183 |       1
+             3 | metal     |      6.9400 |                180.54 |                  1342 |       2
+             4 | metal     |      9.0122 |                  1287 |                  2470 |       2
+             5 | metalloid |     10.8100 |                  2075 |                  4000 |       3
+          1000 | metalloid |      1.0000 |                    10 |                   100 |       3
+             9 | nonmetal  |     18.9980 |                  -220 |                -188.1 |       1
+(10 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE NUMERIC(7,3);
+ALTER TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |       1.008 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |       4.003 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |      12.011 |                  3550 |                  4027 |       1
+             7 | nonmetal  |      14.007 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |      15.999 |                  -218 |                  -183 |       1
+             3 | metal     |       6.940 |                180.54 |                  1342 |       2
+             4 | metal     |       9.012 |                  1287 |                  2470 |       2
+             5 | metalloid |      10.810 |                  2075 |                  4000 |       3
+          1000 | metalloid |       1.000 |                    10 |                   100 |       3
+             9 | nonmetal  |      18.998 |                  -220 |                -188.1 |       1
+(10 rows)
+
+periodic_table=> INSERT INTO elements(atomic_number, symbol, name) VALUES('10', 'Ne', 'Neon');
+INSERT 0 1
+periodic_table=> INSERT INTO properties(atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id) VALUES('10', 'nonmetal', '20.18', '-248.6', '-246.1', '10');
+ERROR:  insert or update on table "properties" violates foreign key constraint "type_id"
+DETAIL:  Key (type_id)=(10) is not present in table "types".
+periodic_table=> INSERT INTO properties(atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id) VALUES('10', 'nonmetal', '20.18', '-248.6', '-246.1', '1');
+INSERT 0 1
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |       1.008 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |       4.003 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |      12.011 |                  3550 |                  4027 |       1
+             7 | nonmetal  |      14.007 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |      15.999 |                  -218 |                  -183 |       1
+             3 | metal     |       6.940 |                180.54 |                  1342 |       2
+             4 | metal     |       9.012 |                  1287 |                  2470 |       2
+             5 | metalloid |      10.810 |                  2075 |                  4000 |       3
+          1000 | metalloid |       1.000 |                    10 |                   100 |       3
+             9 | nonmetal  |      18.998 |                  -220 |                -188.1 |       1
+            10 | nonmetal  |      20.180 |                -248.6 |                -246.1 |       1
+(11 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE DECIMAL(7,3);
+ALTER TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |       1.008 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |       4.003 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |      12.011 |                  3550 |                  4027 |       1
+             7 | nonmetal  |      14.007 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |      15.999 |                  -218 |                  -183 |       1
+             3 | metal     |       6.940 |                180.54 |                  1342 |       2
+             4 | metal     |       9.012 |                  1287 |                  2470 |       2
+             5 | metalloid |      10.810 |                  2075 |                  4000 |       3
+          1000 | metalloid |       1.000 |                    10 |                   100 |       3
+             9 | nonmetal  |      18.998 |                  -220 |                -188.1 |       1
+            10 | nonmetal  |      20.180 |                -248.6 |                -246.1 |       1
+(11 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE NUMERIC;
+ALTER TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |       1.008 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |       4.003 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |      12.011 |                  3550 |                  4027 |       1
+             7 | nonmetal  |      14.007 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |      15.999 |                  -218 |                  -183 |       1
+             3 | metal     |       6.940 |                180.54 |                  1342 |       2
+             4 | metal     |       9.012 |                  1287 |                  2470 |       2
+             5 | metalloid |      10.810 |                  2075 |                  4000 |       3
+          1000 | metalloid |       1.000 |                    10 |                   100 |       3
+             9 | nonmetal  |      18.998 |                  -220 |                -188.1 |       1
+            10 | nonmetal  |      20.180 |                -248.6 |                -246.1 |       1
+(11 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE DECIMAL;
+ALTER TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |       1.008 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |       4.003 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |      12.011 |                  3550 |                  4027 |       1
+             7 | nonmetal  |      14.007 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |      15.999 |                  -218 |                  -183 |       1
+             3 | metal     |       6.940 |                180.54 |                  1342 |       2
+             4 | metal     |       9.012 |                  1287 |                  2470 |       2
+             5 | metalloid |      10.810 |                  2075 |                  4000 |       3
+          1000 | metalloid |       1.000 |                    10 |                   100 |       3
+             9 | nonmetal  |      18.998 |                  -220 |                -188.1 |       1
+            10 | nonmetal  |      20.180 |                -248.6 |                -246.1 |       1
+(11 rows)
+
+periodic_table=> 

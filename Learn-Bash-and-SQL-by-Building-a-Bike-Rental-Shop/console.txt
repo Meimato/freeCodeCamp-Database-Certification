@@ -1,0 +1,722 @@
+codeally@0f382001e686:~/project$ psql --username=freecodecamp --dbname=postgres
+psql: error: could not connect to server: Connection refused
+        Is the server running locally and accepting
+        connections on Unix domain socket "/var/run/postgresql/.s.PGSQL.5432"?
+codeally@0f382001e686:~/project$ sudo /etc/init.d/postgresql restart
+ * Restarting PostgreSQL 12 database server                                     [ OK ] 
+codeally@0f382001e686:~/project$ psql --username=freecodecamp --dbname=postgres
+Border style is 2.
+Title is " ".
+Pager usage is off.
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+postgres=> SELECT * FROM rentals;
+ERROR:  relation "rentals" does not exist
+LINE 1: SELECT * FROM rentals;
+                      ^
+postgres=> \d
+Did not find any relations.
+postgres=> \l
+postgres=>                                  List of databases
++-----------+--------------+----------+---------+---------+-----------------------+
+|   Name    |    Owner     | Encoding | Collate |  Ctype  |   Access privileges   |
++-----------+--------------+----------+---------+---------+-----------------------+
+| bikes     | freecodecamp | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| postgres  | postgres     | UTF8     | C.UTF-8 | C.UTF-8 |                       |
+| template0 | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|           |              |          |         |         | postgres=CTc/postgres |
+| template1 | postgres     | UTF8     | C.UTF-8 | C.UTF-8 | =c/postgres          +|
+|           |              |          |         |         | postgres=CTc/postgres |
++-----------+--------------+----------+---------+---------+-----------------------+
+(4 rows)
+
+\c bikes
+You are now connected to database "bikes" as user "freecodecamp".
+bikes=> SELECT * FROM rentals;
+                                  
++-----------+-------------+---------+-------------+---------------+
+| rental_id | customer_id | bike_id | date_rented | date_returned |
++-----------+-------------+---------+-------------+---------------+
+|         1 |           1 |       1 | 2022-02-02  |               |
+|         2 |           1 |       2 | 2022-02-02  |               |
+|         3 |           1 |       3 | 2022-02-02  |               |
+|         4 |           1 |       4 | 2022-02-02  |               |
+|         5 |           1 |       5 | 2022-02-02  |               |
+|         6 |           1 |       6 | 2022-02-02  |               |
+|         7 |           2 |       7 | 2022-02-02  |               |
+|         8 |           3 |       8 | 2022-02-02  |               |
+|         9 |           4 |       9 | 2022-02-02  |               |
++-----------+-------------+---------+-------------+---------------+
+(9 rows)
+
+bikes=> SELECT * FROM customers;
+                 
++-------------+----------+------+
+| customer_id |  phone   | name |
++-------------+----------+------+
+|           1 | 555-5555 | Me   |
+|           2 | 123      | AAA  |
+|           3 | 345      | Ale  |
+|           4 | 000-0000 | Test |
++-------------+----------+------+
+(4 rows)
+
+bikes=> DELETE FROM customers WHERE name = 'AAA' | name = 'Ale'
+bikes-> SELECT * FROM customers;
+ERROR:  syntax error at or near "="
+LINE 1: DELETE FROM customers WHERE name = 'AAA' | name = 'Ale'
+                                                        ^
+bikes=> ;
+bikes=> DELETE FROM customers WHERE name = 'AAA' | name = 'Ale';
+ERROR:  syntax error at or near "="
+LINE 1: DELETE FROM customers WHERE name = 'AAA' | name = 'Ale';
+                                                        ^
+bikes=> DELETE FROM customers WHERE name = 'AAA' OR name = 'Ale';
+ERROR:  update or delete on table "customers" violates foreign key constraint "rentals_customer_id_fkey" on table "rentals"
+DETAIL:  Key (customer_id)=(2) is still referenced from table "rentals".
+bikes=> DELETE CASCADE FROM customers WHERE name = 'AAA' OR name = 'Ale';
+ERROR:  syntax error at or near "CASCADE"
+LINE 1: DELETE CASCADE FROM customers WHERE name = 'AAA' OR name = '...
+               ^
+bikes=> DELETE CASCADE customers WHERE name = 'AAA' OR name = 'Ale';
+ERROR:  syntax error at or near "CASCADE"
+LINE 1: DELETE CASCADE customers WHERE name = 'AAA' OR name = 'Ale';
+               ^
+bikes=> DELETE FROM customers WHERE name = 'AAA' OR name = 'Ale' CASCADE;
+ERROR:  syntax error at or near "CASCADE"
+LINE 1: ...E FROM customers WHERE name = 'AAA' OR name = 'Ale' CASCADE;
+                                                               ^
+bikes=> TRUNCATE customers WHERE name = 'AAA' OR name = 'Ale' CASCADE;
+ERROR:  syntax error at or near "WHERE"
+LINE 1: TRUNCATE customers WHERE name = 'AAA' OR name = 'Ale' CASCAD...
+                           ^
+bikes=> TRUNCATE customers WHERE name = 'AAA' OR name = 'Ale';
+ERROR:  syntax error at or near "WHERE"
+LINE 1: TRUNCATE customers WHERE name = 'AAA' OR name = 'Ale';
+                           ^
+bikes=> ALTER TABLE rentals DROP CONSTRAINT rentals_customer_id_fkey ADD CONSTRAINT rentals_customer_id_fkey FOREIGN KEY(customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE; 
+ERROR:  syntax error at or near "ADD"
+LINE 1: ... rentals DROP CONSTRAINT rentals_customer_id_fkey ADD CONSTR...
+                                                             ^
+bikes=> ALTER TABLE rentals DROP CONSTRAINT rentals_customer_id_fkey ADD CONSTRAINT customer_id FOREIGN KEY(customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE; 
+ERROR:  syntax error at or near "ADD"
+LINE 1: ... rentals DROP CONSTRAINT rentals_customer_id_fkey ADD CONSTR...
+                                                             ^
+bikes=> ALTER TABLE rentals DROP CONSTRAINT customer_id ADD CONSTRAINT customer_id FOREIGN KEY(customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE; 
+ERROR:  syntax error at or near "ADD"
+LINE 1: ALTER TABLE rentals DROP CONSTRAINT customer_id ADD CONSTRAI...
+                                                        ^
+bikes=> ALTER TABLE rentals DROP CONSTRAINT rentals_customer_id_fkey, ADD CONSTRAINT customer_id FOREIGN KEY(customer_id) REFERENCES customers(customer_id) ON DELETE CASCADE; 
+ALTER TABLE
+bikes=> DELETE FROM customers WHERE name='AAA' OR name='Ale'
+bikes-> ;
+DELETE 2
+bikes=> SELECT * FROM customers;
+                 
++-------------+----------+------+
+| customer_id |  phone   | name |
++-------------+----------+------+
+|           1 | 555-5555 | Me   |
+|           4 | 000-0000 | Test |
++-------------+----------+------+
+(2 rows)
+
+bikes=> ./b 
+bikes-> SELECT * FROM bikes;
+ERROR:  syntax error at or near "."
+LINE 1: ./b 
+        ^
+bikes=> SELECT * FROM bikes;
+bikes=>                      
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       1 | Mountain |   27 | f         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       7 | BMX      |   19 | f         |
+|       8 | BMX      |   20 | f         |
+|       9 | BMX      |   21 | f         |
++---------+----------+------+-----------+
+(9 rows)
+
+SELECT * FROM rentals;
+                                  
++-----------+-------------+---------+-------------+---------------+
+| rental_id | customer_id | bike_id | date_rented | date_returned |
++-----------+-------------+---------+-------------+---------------+
+|         1 |           1 |       1 | 2022-02-02  |               |
+|         2 |           1 |       2 | 2022-02-02  |               |
+|         3 |           1 |       3 | 2022-02-02  |               |
+|         4 |           1 |       4 | 2022-02-02  |               |
+|         5 |           1 |       5 | 2022-02-02  |               |
+|         6 |           1 |       6 | 2022-02-02  |               |
+|         9 |           4 |       9 | 2022-02-02  |               |
++-----------+-------------+---------+-------------+---------------+
+(7 rows)
+
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes;
+ERROR:  syntax error at or near ";"
+LINE 1: SELECT * FROM rentals RIGHT JOIN bikes;
+                                              ^
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes ON rentals.bike_id = bikes.bike_id;
+                                                      
++-----------+-------------+---------+-------------+---------------+---------+----------+------+-----------+
+| rental_id | customer_id | bike_id | date_rented | date_returned | bike_id |   type   | size | available |
++-----------+-------------+---------+-------------+---------------+---------+----------+------+-----------+
+|         1 |           1 |       1 | 2022-02-02  |               |       1 | Mountain |   27 | f         |
+|         2 |           1 |       2 | 2022-02-02  |               |       2 | Mountain |   28 | f         |
+|         3 |           1 |       3 | 2022-02-02  |               |       3 | Mountain |   29 | f         |
+|         4 |           1 |       4 | 2022-02-02  |               |       4 | Road     |   27 | f         |
+|         5 |           1 |       5 | 2022-02-02  |               |       5 | Road     |   28 | f         |
+|         6 |           1 |       6 | 2022-02-02  |               |       6 | Road     |   29 | f         |
+|         9 |           4 |       9 | 2022-02-02  |               |       9 | BMX      |   21 | f         |
+|           |             |         |             |               |       8 | BMX      |   20 | f         |
+|           |             |         |             |               |       7 | BMX      |   19 | f         |
++-----------+-------------+---------+-------------+---------------+---------+----------+------+-----------+
+(9 rows)
+
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes ON rentals.bike_id = bikes.bike_id WHERE rental_id = NULL;
+                                                    
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+| rental_id | customer_id | bike_id | date_rented | date_returned | bike_id | type | size | available |
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+(0 rows)
+
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes ON rentals.bike_id = bikes.bike_id WHERE rental_id = '';
+ERROR:  invalid input syntax for type integer: ""
+LINE 1: ...kes ON rentals.bike_id = bikes.bike_id WHERE rental_id = '';
+                                                                    ^
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes ON rentals.bike_id = bikes.bike_id WHERE rental_id = ' ';
+ERROR:  invalid input syntax for type integer: " "
+LINE 1: ...es ON rentals.bike_id = bikes.bike_id WHERE rental_id = ' ';
+                                                                   ^
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes ON rentals.bike_id = bikes.bike_id WHERE rental_id IS NULL;
+bikes=>                                                     
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+| rental_id | customer_id | bike_id | date_rented | date_returned | bike_id | type | size | available |
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+|           |             |         |             |               |       8 | BMX  |   20 | f         |
+|           |             |         |             |               |       7 | BMX  |   19 | f         |
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+(2 rows)
+
+UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id; 
+UPDATE 7
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE bikes.bike_id = rentals.bike_id; 
+UPDATE 7
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE rental_id IS NULL; 
+UPDATE 0
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE rental.rental_id IS NULL; 
+ERROR:  missing FROM-clause entry for table "rental"
+LINE 1: ...TE bikes SET available = false FROM rentals WHERE rental.ren...
+                                                             ^
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE rentals.rental_id IS NULL; 
+bikes=> UPDATE 0
+;
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE rentals.rental_id IS NULL; 
+UPDATE 0
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id AND rentals.rental_id IS NULL; UPDATE 0
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id AND rental_id IS NULL; bikes=> UPDATE 0
+;
+bikes=> UPDATE bikes SET available = true FROM rentals FULL JOIN bikes WHERE bikes.bike_id = rentals.bike_id AND rentals.rental_id IS NULL; 
+ERROR:  syntax error at or near "WHERE"
+LINE 1: ...SET available = true FROM rentals FULL JOIN bikes WHERE bike...
+                                                             ^
+bikes=> UPDATE bikes SET available = true FROM bikes FULL JOIN rentals WHERE bikes.bike_id = rentals.bike_id AND rentals.rental_id IS NULL; 
+ERROR:  syntax error at or near "WHERE"
+LINE 1: ...SET available = true FROM bikes FULL JOIN rentals WHERE bike...
+                                                             ^
+bikes=> UPDATE bikes SET available = true FROM rentals LEFT JOIN bikes WHERE bikes.bike_id = rentals.bike_id AND rentals.rental_id IS NULL; 
+ERROR:  syntax error at or near "WHERE"
+LINE 1: ...SET available = true FROM rentals LEFT JOIN bikes WHERE bike...
+                                                             ^
+bikes=> UPDATE bikes SET available = true FROM rentals LEFT JOIN bikes ON bikes.bike_id = rentals.bike_id WHERE rentals.rental_id IS NULL; 
+ERROR:  table name "bikes" specified more than once
+bikes=> UPDATE bikes SET available = true FROM rentals FULL JOIN bikes ON bikes.bike_id = rentals.bike_id WHERE rentals.rental_id IS NULL; 
+ERROR:  table name "bikes" specified more than once
+bikes=> UPDATE bikes SET available = true FROM bikes FULL JOIN rentals ON bikes.bike_id = rentals.bike_id WHERE rentals.rental_id IS NULL;
+ERROR:  table name "bikes" specified more than once
+bikes=> UPDATE bikes SET available = true FULL JOIN rentals ON bikes.bike_id = rentals.bike_id WHERE rentals.rental_id IS NULL;
+ERROR:  syntax error at or near "FULL"
+LINE 1: UPDATE bikes SET available = true FULL JOIN rentals ON bikes...
+                                          ^
+bikes=> UPDATE bikes SET available = true FROM bikes FULL JOIN rentals ON bikes.bike_id = rentals.bike_id;ERROR:  table name "bikes" specified more than once
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id AND NOT EXISTS (SELECT rental_id FROM rentals WHERE rentals_id IS NULL);
+ERROR:  column "rentals_id" does not exist
+LINE 1: ...D NOT EXISTS (SELECT rental_id FROM rentals WHERE rentals_id...
+                                                             ^
+HINT:  Perhaps you meant to reference the column "rentals.rental_id" or the column "rentals.rental_id".
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id AND NOT EXISTS (SELECT rental_id FROM rentals WHERE rentals.rentals_id IS NULL);
+ERROR:  column rentals.rentals_id does not exist
+LINE 1: ...D NOT EXISTS (SELECT rental_id FROM rentals WHERE rentals.re...
+                                                             ^
+HINT:  Perhaps you meant to reference the column "rentals.rental_id" or the column "rentals.rental_id".
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id;bikes=> UPDATE 7
+;
+bikes=> SELECT * FROM rentals;
+bikes=>                                   
++-----------+-------------+---------+-------------+---------------+
+| rental_id | customer_id | bike_id | date_rented | date_returned |
++-----------+-------------+---------+-------------+---------------+
+|         1 |           1 |       1 | 2022-02-02  |               |
+|         2 |           1 |       2 | 2022-02-02  |               |
+|         3 |           1 |       3 | 2022-02-02  |               |
+|         4 |           1 |       4 | 2022-02-02  |               |
+|         5 |           1 |       5 | 2022-02-02  |               |
+|         6 |           1 |       6 | 2022-02-02  |               |
+|         9 |           4 |       9 | 2022-02-02  |               |
++-----------+-------------+---------+-------------+---------------+
+(7 rows)
+
+SELECT *;
+bikes=> SELECT 
+bikes-> * FROM bikes;
+bikes=>                      
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       7 | BMX      |   19 | f         |
+|       8 | BMX      |   20 | f         |
+|       1 | Mountain |   27 | t         |
+|       2 | Mountain |   28 | t         |
+|       3 | Mountain |   29 | t         |
+|       4 | Road     |   27 | t         |
+|       5 | Road     |   28 | t         |
+|       6 | Road     |   29 | t         |
+|       9 | BMX      |   21 | t         |
++---------+----------+------+-----------+
+(9 rows)
+
+;
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE bikes.bike_id = rentals.bike_id;
+UPDATE 7
+bikes=> SELECT 
+* FROM bikes;
+bikes=>                      
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       7 | BMX      |   19 | f         |
+|       8 | BMX      |   20 | f         |
+|       1 | Mountain |   27 | f         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       9 | BMX      |   21 | f         |
++---------+----------+------+-----------+
+(9 rows)
+
+;
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE rentals.bike_id IS NULL;
+UPDATE 0
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE rentals.bike_id IS NULL;
+bikes=> UPDATE 0
+;
+bikes=> UPDATE bikes SET available = true FROM rentals WHERE bikes.bike_id = rentals.bike_id AND rentals.bike_id IS NULL;
+UPDATE 0
+bikes=> UPDATE bikes SET available = false FROM rentals WHERE bikes.bike_id = rentals.bike_id AND rentals.bike_id IS NULL;
+bikes=> UPDATE 0
+;
+bikes=> UPDATE bikes SET available = true FROM rentals FULL JOIN bikes ON rentals.bike_id = bikes.bike_id WHERE rentals.bike_id IS NULL;
+ERROR:  table name "bikes" specified more than once
+bikes=> SELECT * FROM bikes;
+                     
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       7 | BMX      |   19 | f         |
+|       8 | BMX      |   20 | f         |
+|       1 | Mountain |   27 | f         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       9 | BMX      |   21 | f         |
++---------+----------+------+-----------+
+(9 rows)
+
+bikes=> SELECT * FROM rentals RIGHT JOIN bikes ON rentals.bike_id = bikes.bike_id WHERE rental_id IS NULL;                                                    
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+| rental_id | customer_id | bike_id | date_rented | date_returned | bike_id | type | size | available |
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+|           |             |         |             |               |       8 | BMX  |   20 | f         |
+|           |             |         |             |               |       7 | BMX  |   19 | f         |
++-----------+-------------+---------+-------------+---------------+---------+------+------+-----------+
+(2 rows)
+
+bikes=> UPDATE bikes SET available = true WHERE bike_id = 8;
+bikes=> UPDATE 1
+UPDATE bikes SET available = true WHERE bike_id = 7;
+UPDATE 1
+bikes=> SELECT * FROM bikes;
+                     
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       1 | Mountain |   27 | f         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       9 | BMX      |   21 | f         |
+|       8 | BMX      |   20 | t         |
+|       7 | BMX      |   19 | t         |
++---------+----------+------+-----------+
+(9 rows)
+
+bikes=> SELECT * FROM bikes ORDER BY bike_id;
+bikes=>                      
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       1 | Mountain |   27 | f         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       7 | BMX      |   19 | f         |
+|       8 | BMX      |   20 | t         |
+|       9 | BMX      |   21 | f         |
++---------+----------+------+-----------+
+(9 rows)
+
+\d
+bikes=>                        List of relations
++--------+---------------------------+----------+--------------+
+| Schema |           Name            |   Type   |    Owner     |
++--------+---------------------------+----------+--------------+
+| public | bikes                     | table    | freecodecamp |
+| public | bikes_bike_id_seq         | sequence | freecodecamp |
+| public | customers                 | table    | freecodecamp |
+| public | customers_customer_id_seq | sequence | freecodecamp |
+| public | rentals                   | table    | freecodecamp |
+| public | rentals_rental_id_seq     | sequence | freecodecamp |
++--------+---------------------------+----------+--------------+
+(6 rows)
+
+SELECT * FROM customers;
+bikes=>                  
++-------------+----------+------+
+| customer_id |  phone   | name |
++-------------+----------+------+
+|           1 | 555-5555 | Me   |
+|           4 | 000-0000 | Test |
++-------------+----------+------+
+(2 rows)
+
+SELECT * FROM rentals;
+bikes=>                                   
++-----------+-------------+---------+-------------+---------------+
+| rental_id | customer_id | bike_id | date_rented | date_returned |
++-----------+-------------+---------+-------------+---------------+
+|         1 |           1 |       1 | 2022-02-02  |               |
+|         2 |           1 |       2 | 2022-02-02  |               |
+|         3 |           1 |       3 | 2022-02-02  |               |
+|         4 |           1 |       4 | 2022-02-02  |               |
+|         5 |           1 |       5 | 2022-02-02  |               |
+|         6 |           1 |       6 | 2022-02-02  |               |
+|         9 |           4 |       9 | 2022-02-02  |               |
+|        10 |           4 |       7 | 2022-02-02  |               |
++-----------+-------------+---------+-------------+---------------+
+(8 rows)
+
+SELECT * FROM bikes;
+bikes=>                      
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       1 | Mountain |   27 | f         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       9 | BMX      |   21 | f         |
+|       8 | BMX      |   20 | t         |
+|       7 | BMX      |   19 | f         |
++---------+----------+------+-----------+
+(9 rows)
+
+SELECT * FROM bikes LEFT JOIN rentals USING(bike_id);
+                                                 
++---------+----------+------+-----------+-----------+-------------+-------------+---------------+
+| bike_id |   type   | size | available | rental_id | customer_id | date_rented | date_returned |
++---------+----------+------+-----------+-----------+-------------+-------------+---------------+
+|       1 | Mountain |   27 | f         |         1 |           1 | 2022-02-02  |               |
+|       2 | Mountain |   28 | f         |         2 |           1 | 2022-02-02  |               |
+|       3 | Mountain |   29 | f         |         3 |           1 | 2022-02-02  |               |
+|       4 | Road     |   27 | f         |         4 |           1 | 2022-02-02  |               |
+|       5 | Road     |   28 | f         |         5 |           1 | 2022-02-02  |               |
+|       6 | Road     |   29 | f         |         6 |           1 | 2022-02-02  |               |
+|       9 | BMX      |   21 | f         |         9 |           4 | 2022-02-02  |               |
+|       7 | BMX      |   19 | f         |        10 |           4 | 2022-02-02  |               |
+|       8 | BMX      |   20 | t         |           |             |             |               |
++---------+----------+------+-----------+-----------+-------------+-------------+---------------+
+(9 rows)
+
+bikes=> SELECT * FROM bikes INNER JOIN rentals USING(bike_id);
+                                                 
++---------+----------+------+-----------+-----------+-------------+-------------+---------------+
+| bike_id |   type   | size | available | rental_id | customer_id | date_rented | date_returned |
++---------+----------+------+-----------+-----------+-------------+-------------+---------------+
+|       1 | Mountain |   27 | f         |         1 |           1 | 2022-02-02  |               |
+|       2 | Mountain |   28 | f         |         2 |           1 | 2022-02-02  |               |
+|       3 | Mountain |   29 | f         |         3 |           1 | 2022-02-02  |               |
+|       4 | Road     |   27 | f         |         4 |           1 | 2022-02-02  |               |
+|       5 | Road     |   28 | f         |         5 |           1 | 2022-02-02  |               |
+|       6 | Road     |   29 | f         |         6 |           1 | 2022-02-02  |               |
+|       9 | BMX      |   21 | f         |         9 |           4 | 2022-02-02  |               |
+|       7 | BMX      |   19 | f         |        10 |           4 | 2022-02-02  |               |
++---------+----------+------+-----------+-----------+-------------+-------------+---------------+
+(8 rows)
+
+bikes=> SELECT * FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customer USING(cusstomer_id);
+ERROR:  relation "customer" does not exist
+LINE 1: ...ikes INNER JOIN rentals USING(bike_id) INNER JOIN customer U...
+                                                             ^
+bikes=> SELECT * FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(cusstomer_id);
+ERROR:  column "cusstomer_id" specified in USING clause does not exist in left table
+bikes=> SELECT * FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id);
+                                                          
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+| customer_id | bike_id |   type   | size | available | rental_id | date_rented | date_returned |  phone   | name |
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+|           1 |       1 | Mountain |   27 | f         |         1 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       2 | Mountain |   28 | f         |         2 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       3 | Mountain |   29 | f         |         3 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       4 | Road     |   27 | f         |         4 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       5 | Road     |   28 | f         |         5 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       6 | Road     |   29 | f         |         6 | 2022-02-02  |               | 555-5555 | Me   |
+|           4 |       9 | BMX      |   21 | f         |         9 | 2022-02-02  |               | 000-0000 | Test |
+|           4 |       7 | BMX      |   19 | f         |        10 | 2022-02-02  |               | 000-0000 | Test |
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+(8 rows)
+
+bikes=> SELECT * FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone='555-5555';
+                                                          
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+| customer_id | bike_id |   type   | size | available | rental_id | date_rented | date_returned |  phone   | name |
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+|           1 |       1 | Mountain |   27 | f         |         1 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       2 | Mountain |   28 | f         |         2 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       3 | Mountain |   29 | f         |         3 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       4 | Road     |   27 | f         |         4 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       5 | Road     |   28 | f         |         5 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       6 | Road     |   29 | f         |         6 | 2022-02-02  |               | 555-5555 | Me   |
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+(6 rows)
+
+bikes=> SELECT * FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone='555-5555' AND date_returned IS NULL;
+                                                          
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+| customer_id | bike_id |   type   | size | available | rental_id | date_rented | date_returned |  phone   | name |
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+|           1 |       1 | Mountain |   27 | f         |         1 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       2 | Mountain |   28 | f         |         2 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       3 | Mountain |   29 | f         |         3 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       4 | Road     |   27 | f         |         4 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       5 | Road     |   28 | f         |         5 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |       6 | Road     |   29 | f         |         6 | 2022-02-02  |               | 555-5555 | Me   |
++-------------+---------+----------+------+-----------+-----------+-------------+---------------+----------+------+
+(6 rows)
+
+bikes=> SELECT ype, size FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone='555-5555' AND date_returned IS NULL;
+ERROR:  column "ype" does not exist
+LINE 1: SELECT ype, size FROM bikes INNER JOIN rentals USING(bike_id...
+               ^
+HINT:  Perhaps you meant to reference the column "bikes.type".
+bikes=> SELECT type, size FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone='555-5555' AND date_returned IS NULL;
+bikes=>           
++----------+------+
+|   type   | size |
++----------+------+
+| Mountain |   27 |
+| Mountain |   28 |
+| Mountain |   29 |
+| Road     |   27 |
+| Road     |   28 |
+| Road     |   29 |
++----------+------+
+(6 rows)
+
+SELECT t;SELECT bike_id, type, size FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone=' A5ND date_returned IS NULL;
+               
++---------+----------+------+
+| bike_id |   type   | size |
++---------+----------+------+
+|       1 | Mountain |   27 |
+|       2 | Mountain |   28 |
+|       3 | Mountain |   29 |
+|       4 | Road     |   27 |
+|       5 | Road     |   28 |
+|       6 | Road     |   29 |
++---------+----------+------+
+(6 rows)
+
+bikes=> ;SELECT bike_id, type, size FROM bikes INNER JOIN rentals USING(bike_id) INNER JOIN customers USING(customer_id) WHERE phone='555-5555' AND date_returned IS NULL ORDER BY bike_id;
+bikes=>                
++---------+----------+------+
+| bike_id |   type   | size |
++---------+----------+------+
+|       1 | Mountain |   27 |
+|       2 | Mountain |   28 |
+|       3 | Mountain |   29 |
+|       4 | Road     |   27 |
+|       5 | Road     |   28 |
+|       6 | Road     |   29 |
++---------+----------+------+
+(6 rows)
+
+;
+bikes=> SELECT * FROM rentals INNER JOIN customers USING(customer_id);
+bikes=>                                            
++-------------+-----------+---------+-------------+---------------+----------+------+
+| customer_id | rental_id | bike_id | date_rented | date_returned |  phone   | name |
++-------------+-----------+---------+-------------+---------------+----------+------+
+|           1 |         1 |       1 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |         2 |       2 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |         3 |       3 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |         4 |       4 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |         5 |       5 | 2022-02-02  |               | 555-5555 | Me   |
+|           1 |         6 |       6 | 2022-02-02  |               | 555-5555 | Me   |
+|           4 |         9 |       9 | 2022-02-02  |               | 000-0000 | Test |
+|           4 |        10 |       7 | 2022-02-02  |               | 000-0000 | Test |
++-------------+-----------+---------+-------------+---------------+----------+------+
+(8 rows)
+
+SELECT *;
+bikes=> SELECT phone, bike_id, date_returned FROM rentals INNER JOIN customers USING(customer_id) ;
+bikes=>                    
++----------+---------+---------------+
+|  phone   | bike_id | date_returned |
++----------+---------+---------------+
+| 555-5555 |       1 |               |
+| 555-5555 |       2 |               |
+| 555-5555 |       3 |               |
+| 555-5555 |       4 |               |
+| 555-5555 |       5 |               |
+| 555-5555 |       6 |               |
+| 000-0000 |       9 |               |
+| 000-0000 |       7 |               |
++----------+---------+---------------+
+(8 rows)
+
+SELECT phone, bike_id, date_returned FROM rentals INNER JOIN customers USING(customer_id) WHERE name = "Me";
+ERROR:  column "Me" does not exist
+LINE 1: ...s INNER JOIN customers USING(customer_id) WHERE name = "Me";
+                                                                  ^
+bikes=> SELECT phone, bike_id, date_returned FROM rentals INNER JOIN customers USING(customer_id) WHERE name = 'Me';
+                   
++----------+---------+---------------+
+|  phone   | bike_id | date_returned |
++----------+---------+---------------+
+| 555-5555 |       1 |               |
+| 555-5555 |       2 |               |
+| 555-5555 |       3 |               |
+| 555-5555 |       4 |               |
+| 555-5555 |       5 |               |
+| 555-5555 |       6 |               |
++----------+---------+---------------+
+(6 rows)
+
+bikes=> SELECT * FROM rentals INNER JOIN customers USING(customer_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+                                           
++-------------+-----------+---------+-------------+---------------+----------+------+
+| customer_id | rental_id | bike_id | date_rented | date_returned |  phone   | name |
++-------------+-----------+---------+-------------+---------------+----------+------+
+|           1 |         1 |       1 | 2022-02-02  |               | 555-5555 | Me   |
++-------------+-----------+---------+-------------+---------------+----------+------+
+(1 row)
+
+bikes=> SELECT * FROM rentals INNER JOIN customers USING(customer_id) INNER JOIN bikes USING(bike_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+                                                          
++---------+-------------+-----------+-------------+---------------+----------+------+----------+------+-----------+
+| bike_id | customer_id | rental_id | date_rented | date_returned |  phone   | name |   type   | size | available |
++---------+-------------+-----------+-------------+---------------+----------+------+----------+------+-----------+
+|       1 |           1 |         1 | 2022-02-02  |               | 555-5555 | Me   | Mountain |   27 | f         |
++---------+-------------+-----------+-------------+---------------+----------+------+----------+------+-----------+
+(1 row)
+
+bikes=> SELECT type, size FROM rentals INNER JOIN customers USING(customer_id) INNER JOIN bikes USING(bike_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+          
++----------+------+
+|   type   | size |
++----------+------+
+| Mountain |   27 |
++----------+------+
+(1 row)
+
+bikes=> SELECT date_rented, type, size FROM rentals INNER JOIN customers USING(customer_id) INNER JOIN bikes USING(bike_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+bikes=>                  
++-------------+----------+------+
+| date_rented |   type   | size |
++-------------+----------+------+
+| 2022-02-02  | Mountain |   27 |
++-------------+----------+------+
+(1 row)
+
+SELECT d;bikes=> SELECT rental_id FROM rentals INNER JOIN customers USING(customer_id) INNER JOIN bikes USING(bike_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+bikes=>        
++-----------+
+| rental_id |
++-----------+
+|         1 |
++-----------+
+(1 row)
+
+SELECT rental_id FROM rentals INNER JOIN customers USING(customer_id) ike_id) WHERE phone = '555-5555' AND bike_id = 1 AND daned IS NULL;
+ERROR:  column "custoike_id" specified in USING clause does not exist in left table
+bikes=> SELECT rental_id FROM rentals INNER JOIN customers USING(custoike_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+ERROR:  column "custoike_id" specified in USING clause does not exist in left table
+bikes=> SELECT rental_id FROM rentals INNER JOIN customers USING(customer_id) WHERE phone = '555-5555' AND bike_id = 1 AND date_returned IS NULL;
+       
++-----------+
+| rental_id |
++-----------+
+|         1 |
++-----------+
+(1 row)
+
+bikes=> SELECT * FROM rentals;
+                                  
++-----------+-------------+---------+-------------+---------------+
+| rental_id | customer_id | bike_id | date_rented | date_returned |
++-----------+-------------+---------+-------------+---------------+
+|         2 |           1 |       2 | 2022-02-02  |               |
+|         3 |           1 |       3 | 2022-02-02  |               |
+|         4 |           1 |       4 | 2022-02-02  |               |
+|         5 |           1 |       5 | 2022-02-02  |               |
+|         6 |           1 |       6 | 2022-02-02  |               |
+|         9 |           4 |       9 | 2022-02-02  |               |
+|        10 |           4 |       7 | 2022-02-02  |               |
+|         1 |           1 |       1 | 2022-02-02  | 2022-02-02    |
++-----------+-------------+---------+-------------+---------------+
+(8 rows)
+
+bikes=> SELECT * FROM bikes ORDER BY bike_id;
+                     
++---------+----------+------+-----------+
+| bike_id |   type   | size | available |
++---------+----------+------+-----------+
+|       1 | Mountain |   27 | t         |
+|       2 | Mountain |   28 | f         |
+|       3 | Mountain |   29 | f         |
+|       4 | Road     |   27 | f         |
+|       5 | Road     |   28 | f         |
+|       6 | Road     |   29 | f         |
+|       7 | BMX      |   19 | f         |
+|       8 | BMX      |   20 | t         |
+|       9 | BMX      |   21 | f         |
++---------+----------+------+-----------+
+(9 rows)

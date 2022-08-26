@@ -1,0 +1,328 @@
+codeally@b8666598981b:~/project$ psql --username=freecodecamp --dbname=periodic_table
+psql (12.9 (Ubuntu 12.9-0ubuntu0.20.04.1))
+Type "help" for help.
+
+periodic_table=> \d
+             List of relations
+ Schema |    Name    | Type  |    Owner     
+--------+------------+-------+--------------
+ public | elements   | table | freecodecamp
+ public | properties | table | freecodecamp
+(2 rows)
+
+periodic_table=> \d properties
+                       Table "public.properties"
+    Column     |         Type          | Collation | Nullable | Default 
+---------------+-----------------------+-----------+----------+---------
+ atomic_number | integer               |           | not null | 
+ type          | character varying(30) |           |          | 
+ weight        | numeric(9,6)          |           | not null | 
+ melting_point | numeric               |           |          | 
+ boiling_point | numeric               |           |          | 
+Indexes:
+    "properties_pkey" PRIMARY KEY, btree (atomic_number)
+    "properties_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+
+periodic_table=> \d elements
+                        Table "public.elements"
+    Column     |         Type          | Collation | Nullable | Default 
+---------------+-----------------------+-----------+----------+---------
+ atomic_number | integer               |           | not null | 
+ symbol        | character varying(2)  |           |          | 
+ name          | character varying(40) |           |          | 
+Indexes:
+    "elements_pkey" PRIMARY KEY, btree (atomic_number)
+    "elements_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+
+periodic_table=> ALTER TABLE properties RENAME COLUMN weight TO atomic_mass;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties RENAME COLUMN melting_point TO melting_point_celsius;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties RENAME COLUMN boiling_point TO boiling_point_celsius;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties ALTER COLUMN melting_point_celsius SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties ALTER COLUMN boiling_point_celsius SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE elements ADD UNIQUE(symbol, name);
+ALTER TABLE
+periodic_table=> ALTER TABLE elements ALTER COLUMN symbol SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE elements ALTER COLUMN name SET NOT NULL;
+ALTER TABLE
+periodic_table=> ALTER TABLE properties ADD CONSTRAINT atomic_number FOREIGN KEY(atomic_number) REFERENCES elements(atomic_number);
+ALTER TABLE
+periodic_table=> CREATE TABLE types( type_id INT PRIMARY KEY, type VARCHAR(20) NOT NULL);
+CREATE TABLE
+periodic_table=> INSERT INTO types(type_id, type) VALUES('1', 'nonmetal'), ('2', 'metal'), ('3', 'metalloid');
+INSERT 0 3
+periodic_table=> ALTER TABLE properties ADD COLUMN type_id INT, ADD CONSTRAINT type_id FOREIGN KEY(type_id) REFERENCES types(type_id);
+ALTER TABLE
+periodic_table=> UPDATE properties SET type_id = 1 WHERE type = 'nonmetal';
+UPDATE 5
+periodic_table=> UPDATE properties SET type_id = 2 WHERE type = 'metal';
+UPDATE 2
+periodic_table=> UPDATE properties SET type_id = 3 WHERE type = 'metalloid';
+UPDATE 2
+periodic_table=> ALTER TABLE properties ALTER COLUMN type_id SET NOT NULL;
+ALTER TABLE
+periodic_table=> UPDATE elements SET symbol = CONCAT( UPPER( LEFT( symbol,1 ) ), LOWER( SUBSTRING( symbol, 2, LENGTH( symbol ) ) ) );
+UPDATE 9
+periodic_table=> \d properties
+                           Table "public.properties"
+        Column         |         Type          | Collation | Nullable | Default 
+-----------------------+-----------------------+-----------+----------+---------
+ atomic_number         | integer               |           | not null | 
+ type                  | character varying(30) |           |          | 
+ atomic_mass           | numeric(9,6)          |           | not null | 
+ melting_point_celsius | numeric               |           | not null | 
+ boiling_point_celsius | numeric               |           | not null | 
+ type_id               | integer               |           | not null | 
+Indexes:
+    "properties_pkey" PRIMARY KEY, btree (atomic_number)
+    "properties_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+Foreign-key constraints:
+    "atomic_number" FOREIGN KEY (atomic_number) REFERENCES elements(atomic_number)
+    "type_id" FOREIGN KEY (type_id) REFERENCES types(type_id)
+
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE DECIMAL;
+ALTER TABLE
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> \d properties
+                           Table "public.properties"
+        Column         |         Type          | Collation | Nullable | Default 
+-----------------------+-----------------------+-----------+----------+---------
+ atomic_number         | integer               |           | not null | 
+ type                  | character varying(30) |           |          | 
+ atomic_mass           | numeric               |           | not null | 
+ melting_point_celsius | numeric               |           | not null | 
+ boiling_point_celsius | numeric               |           | not null | 
+ type_id               | integer               |           | not null | 
+Indexes:
+    "properties_pkey" PRIMARY KEY, btree (atomic_number)
+    "properties_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+Foreign-key constraints:
+    "atomic_number" FOREIGN KEY (atomic_number) REFERENCES elements(atomic_number)
+    "type_id" FOREIGN KEY (type_id) REFERENCES types(type_id)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE VARCHAR(30);
+ALTER TABLE
+periodic_table=> \d properties
+                           Table "public.properties"
+        Column         |         Type          | Collation | Nullable | Default 
+-----------------------+-----------------------+-----------+----------+---------
+ atomic_number         | integer               |           | not null | 
+ type                  | character varying(30) |           |          | 
+ atomic_mass           | character varying(30) |           | not null | 
+ melting_point_celsius | numeric               |           | not null | 
+ boiling_point_celsius | numeric               |           | not null | 
+ type_id               | integer               |           | not null | 
+Indexes:
+    "properties_pkey" PRIMARY KEY, btree (atomic_number)
+    "properties_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+Foreign-key constraints:
+    "atomic_number" FOREIGN KEY (atomic_number) REFERENCES elements(atomic_number)
+    "type_id" FOREIGN KEY (type_id) REFERENCES types(type_id)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE DECIMAL;
+ERROR:  column "atomic_mass" cannot be cast automatically to type numeric
+HINT:  You might need to specify "USING atomic_mass::numeric".
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE DECIMAL USING atomic_mass::numeric;
+ALTER TABLE
+periodic_table=> \d properties
+                           Table "public.properties"
+        Column         |         Type          | Collation | Nullable | Default 
+-----------------------+-----------------------+-----------+----------+---------
+ atomic_number         | integer               |           | not null | 
+ type                  | character varying(30) |           |          | 
+ atomic_mass           | numeric               |           | not null | 
+ melting_point_celsius | numeric               |           | not null | 
+ boiling_point_celsius | numeric               |           | not null | 
+ type_id               | integer               |           | not null | 
+Indexes:
+    "properties_pkey" PRIMARY KEY, btree (atomic_number)
+    "properties_atomic_number_key" UNIQUE CONSTRAINT, btree (atomic_number)
+Foreign-key constraints:
+    "atomic_number" FOREIGN KEY (atomic_number) REFERENCES elements(atomic_number)
+    "type_id" FOREIGN KEY (type_id) REFERENCES types(type_id)
+
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE DECIMAL USING TRIM_SCALE(atomic_mass::numeric);
+ERROR:  function trim_scale(numeric) does not exist
+LINE 1: ...rties ALTER COLUMN atomic_mass TYPE DECIMAL USING TRIM_SCALE...
+                                                             ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TYPE TRIM_SCALE(DECIMAL)
+periodic_table-> ;
+ERROR:  type "trim_scale" does not exist
+periodic_table=> ALTER TABLE properties ALTER COLUMN atomic_mass TRIM_SCALE(DECIMAL)
+;
+ERROR:  syntax error at or near "TRIM_SCALE"
+LINE 1: ALTER TABLE properties ALTER COLUMN atomic_mass TRIM_SCALE(D...
+                                                        ^
+periodic_table=> psql --version
+periodic_table-> SELECT version();
+ERROR:  syntax error at or near "psql"
+LINE 1: psql 
+        ^
+periodic_table=> ;
+periodic_table=> SELECT version();
+                                                               version                                                               
+-------------------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 12.9 (Ubuntu 12.9-0ubuntu0.20.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 9.3.0-17ubuntu1~20.04) 9.3.0, 64-bit
+(1 row)
+
+periodic_table=> SELECT TRIM( TRAILING '0' FROM atomic_mass) FROM properties; 
+ERROR:  function pg_catalog.rtrim(numeric, unknown) does not exist
+LINE 1: SELECT TRIM( TRAILING '0' FROM atomic_mass) FROM properties;
+               ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> SELECT TRIM( TRAILING '0') FROM properties; 
+ rtrim 
+-------
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
+ 0
+(9 rows)
+
+periodic_table=> SELECT *, TRIM( TRAILING '0') FROM properties; 
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id | rtrim 
+---------------+-----------+-------------+-----------------------+-----------------------+---------+-------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1 | 0
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1 | 0
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1 | 0
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1 | 0
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1 | 0
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2 | 0
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2 | 0
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3 | 0
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3 | 0
+(9 rows)
+
+periodic_table=> SELECT *, TRIM( BOTH '0') FROM properties; 
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id | btrim 
+---------------+-----------+-------------+-----------------------+-----------------------+---------+-------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1 | 0
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1 | 0
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1 | 0
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1 | 0
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1 | 0
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2 | 0
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2 | 0
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3 | 0
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3 | 0
+(9 rows)
+
+periodic_table=> SELECT *, TRIM( BOTH '0' from atomic_mass) FROM properties; 
+ERROR:  function pg_catalog.btrim(numeric, unknown) does not exist
+LINE 1: SELECT *, TRIM( BOTH '0' from atomic_mass) FROM properties;
+                  ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> SELECT *, TRIM( BOTH '0' from atomic_mass::numeric) FROM properties; 
+ERROR:  function pg_catalog.btrim(numeric, unknown) does not exist
+LINE 1: SELECT *, TRIM( BOTH '0' from atomic_mass::numeric) FROM pro...
+                  ^
+HINT:  No function matches the given name and argument types. You might need to add explicit type casts.
+periodic_table=> SELECT *, TRIM( BOTH '0' from atomic_mass::varchar(15)) FROM properties; 
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id | btrim  
+---------------+-----------+-------------+-----------------------+-----------------------+---------+--------
+             1 | nonmetal  |    1.008000 |                -259.1 |                -252.9 |       1 | 1.008
+             2 | nonmetal  |    4.002600 |                -272.2 |                  -269 |       1 | 4.0026
+             6 | nonmetal  |   12.011000 |                  3550 |                  4027 |       1 | 12.011
+             7 | nonmetal  |   14.007000 |                -210.1 |                -195.8 |       1 | 14.007
+             8 | nonmetal  |   15.999000 |                  -218 |                  -183 |       1 | 15.999
+             3 | metal     |    6.940000 |                180.54 |                  1342 |       2 | 6.94
+             4 | metal     |    9.012200 |                  1287 |                  2470 |       2 | 9.0122
+             5 | metalloid |   10.810000 |                  2075 |                  4000 |       3 | 10.81
+          1000 | metalloid |    1.000000 |                    10 |                   100 |       3 | 1.
+(9 rows)
+
+periodic_table=> UPDATE properties SET atomic_mass = TRIM( BOTH '0' from atomic_mass::varchar(15));
+ERROR:  column "atomic_mass" is of type numeric but expression is of type text
+LINE 1: UPDATE properties SET atomic_mass = TRIM( BOTH '0' from atom...
+                                            ^
+HINT:  You will need to rewrite or cast the expression.
+periodic_table=> UPDATE properties SET atomic_mass = TRIM( BOTH '0' from atomic_mass::varchar(15)) AS DECIMAL;
+ERROR:  syntax error at or near "AS"
+LINE 1: ...s = TRIM( BOTH '0' from atomic_mass::varchar(15)) AS DECIMAL...
+                                                             ^
+periodic_table=> UPDATE properties SET atomic_mass = CAST( TRIM( BOTH '0' from atomic_mass::varchar(15))) AS DECIMAL;
+ERROR:  syntax error at or near ")"
+LINE 1: ...AST( TRIM( BOTH '0' from atomic_mass::varchar(15))) AS DECIM...
+                                                             ^
+periodic_table=> UPDATE properties SET atomic_mass = TRIM( BOTH '0' from atomic_mass::varchar(15))::decimal;
+UPDATE 9
+periodic_table=> SELECT * FROM properties;
+ atomic_number |   type    | atomic_mass | melting_point_celsius | boiling_point_celsius | type_id 
+---------------+-----------+-------------+-----------------------+-----------------------+---------
+             1 | nonmetal  |       1.008 |                -259.1 |                -252.9 |       1
+             2 | nonmetal  |      4.0026 |                -272.2 |                  -269 |       1
+             6 | nonmetal  |      12.011 |                  3550 |                  4027 |       1
+             7 | nonmetal  |      14.007 |                -210.1 |                -195.8 |       1
+             8 | nonmetal  |      15.999 |                  -218 |                  -183 |       1
+             3 | metal     |        6.94 |                180.54 |                  1342 |       2
+             4 | metal     |      9.0122 |                  1287 |                  2470 |       2
+             5 | metalloid |       10.81 |                  2075 |                  4000 |       3
+          1000 | metalloid |           1 |                    10 |                   100 |       3
+(9 rows)
+
+periodic_table=> INSERT INTO elements(atomic_number, symbol, name) VALUES('9', 'F', 'Fluorine');
+INSERT 0 1
+periodic_table=> INSERT INTO properties(atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id) VALUES('9', 'nonmetal', '18.998', '-220', '-188.1', '1');
+INSERT 0 1
+periodic_table=> INSERT INTO elements(atomic_number, symbol, name) VALUES('10', 'Ne', 'Neon');
+INSERT 0 1
+periodic_table=> INSERT INTO properties(atomic_number, type, atomic_mass, melting_point_celsius, boiling_point_celsius, type_id) VALUES('10', 'nonmetal', '20.18', '-248.6', '-246.1', '1');
+INSERT 0 1
+periodic_table=> DELETE FROM properties WHERE atomic_number = 1000;
+DELETE 1
+periodic_table=> DELETE FROM elements WHERE atomic_number = 1000;
+DELETE 1
+periodic_table=> ALTER TABLE properties DROP COLUMN type;
+ALTER TABLE
